@@ -1,0 +1,12 @@
+.light-card {
+  box-shadow: 14px 17px 40px 4px rgba(112, 144, 176, 0.08);
+  border-width: 0px;
+  background: none;
+}
+
+.dark-card {
+  border-color: rgba(255, 255, 255, 0.1);
+  box-shadow: unset;
+  border-width: 1px;
+  background: navy;
+}
