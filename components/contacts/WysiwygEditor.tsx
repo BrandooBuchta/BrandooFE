@@ -60,6 +60,7 @@ const WysiwygEditor: FC<WysiwygEditorProps> = ({ setContent }) => {
     for (let i = 0; i < fontElements.length; i++) {
       if (fontElements[i].size === "7") {
         fontElements[i].removeAttribute("size");
+        // @ts-ignore
         fontElements[i].style.fontSize = newSize;
       }
     }

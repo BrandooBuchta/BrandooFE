@@ -41,9 +41,11 @@ export default function App({ Component, pageProps }: AppProps) {
     <NextUIProvider navigate={router.push}>
       <NextThemesProvider>
         <DefaultLayout>
-          <Component {...pageProps} />
-          <div className="absolute bottom-0 right-0 m-7">
-            <ThemeSwitch variant="shadow" />
+          <div className="relative">
+            <Component {...pageProps} />
+            <div className="fixed bottom-0 right-0 m-7">
+              <ThemeSwitch variant="shadow" />
+            </div>
           </div>
           <ToastContainer theme="dark" />
         </DefaultLayout>

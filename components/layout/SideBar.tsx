@@ -1,5 +1,6 @@
 import { FC, useEffect, useState } from "react";
 import { toast } from "react-toastify";
+import { Switch } from "@nextui-org/react";
 
 import { MenuItem } from "./MenuItem";
 
@@ -55,7 +56,7 @@ export const Sidebar: FC<SidebarProps> = ({ isOpen, isDark }) => {
 
   return (
     <aside
-      className={`fixed top-0 left-0 h-full w-64 pt-16 shadow-2xl transform transition-transform duration-300 ease-in-out ${
+      className={`flex flex-col justify-between fixed top-0 left-0 h-full w-64 pt-16 shadow-2xl transform transition-transform duration-300 ease-in-out ${
         isOpen ? "translate-x-0" : "-translate-x-full"
       } ${isDark ? "bg-stone-950 border-r border-gray-700" : "bg-white"}`}
     >
@@ -63,6 +64,17 @@ export const Sidebar: FC<SidebarProps> = ({ isOpen, isDark }) => {
         {links.map((link) => (
           <MenuItem key={link.name} link={link} />
         ))}
+      </div>
+      <div className="grid place-items-center py-10">
+        <div className="flex align-center">
+          <Switch
+            color="primary"
+            isSelected={userStore.isDevMode}
+            size="sm"
+            onClick={() => userStore.setIsDevMode()}
+          />
+          <p className="text-default-700 font-semibold">Vývojářský mód</p>
+        </div>
       </div>
     </aside>
   );

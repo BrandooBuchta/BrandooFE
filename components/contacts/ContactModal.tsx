@@ -23,7 +23,7 @@ interface ContactModalProps {
   isOpen: boolean;
   contactId: string;
   formProperties: string[];
-  refetch: () => Promise<void>
+  refetch: () => Promise<void>;
 }
 
 const ContactModal: FC<ContactModalProps> = ({
@@ -31,7 +31,7 @@ const ContactModal: FC<ContactModalProps> = ({
   onOpenChange,
   contactId,
   formProperties,
-  refetch
+  refetch,
 }) => {
   const slideInFromRight = {
     hidden: { opacity: 0, x: 100 },
@@ -140,6 +140,7 @@ const ContactModal: FC<ContactModalProps> = ({
                     </div>
                   </div>
                   <div className="flex gap-1">
+                    <LabelDropdown contact={contact} refetch={getContact} />
                     <Button
                       isIconOnly
                       color="danger"
@@ -149,7 +150,6 @@ const ContactModal: FC<ContactModalProps> = ({
                       variant="shadow"
                       onClick={() => deleteContact(contact.id)}
                     />
-                    <LabelDropdown contact={contact} refetch={getContact} />
                   </div>
                 </CardHeader>
                 <CardBody className="px-3 py-0 text-small text-default-400">

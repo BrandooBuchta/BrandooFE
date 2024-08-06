@@ -4,8 +4,9 @@ require("dotenv").config();
 const nextConfig = {
   reactStrictMode: true,
   env: {
-    BACKEND_URL_LOCAL: process.env.BACKEND_URL_LOCAL,
-    BACKEND_URL: process.env.BACKEND_URL,
+    PUBLIC_BACKEND_URL_PROD: 'api.brandoo.cz/api/',
+    PUBLIC_BACKEND_URL_DEV: 'dev.api.brandoo.cz/api/',
+    BACKEND_URL: 'http://localhost:8000/api/',
   },
 };
 

@@ -9,7 +9,6 @@ import {
   Button,
   Badge,
   useDisclosure,
-  Switch,
 } from "@nextui-org/react";
 import NextLink from "next/link";
 import { FC, useEffect, useState } from "react";
@@ -71,15 +70,6 @@ export const AppBar: FC<AppBarProps> = ({ toggleSidebar }) => {
         className="hidden sm:flex basis-1/5 sm:basis-full"
         justify="end"
       >
-        <div className="flex">
-          <Switch
-            color="primary"
-            isSelected={userStore.isDevMode}
-            size="sm"
-            onClick={() => userStore.setIsDevMode()}
-          />
-          Vývojářský mód
-        </div>
         <Badge
           color="primary"
           content="!"
