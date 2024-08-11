@@ -10,7 +10,6 @@ import {
 } from "lodash";
 
 dotenv.config();
-
 export const baseURL = process.env.NEXT_PUBLIC_BACKEND_URL;
 
 const instance: AxiosInstance = axios.create({
