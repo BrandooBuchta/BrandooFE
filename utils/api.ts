@@ -1,3 +1,4 @@
+import dotenv from "dotenv";
 import axios, { AxiosInstance } from "axios";
 import {
   camelCase,
@@ -8,7 +9,9 @@ import {
   mapValues,
 } from "lodash";
 
-export const baseURL = process.env.BACKEND_URL || "http://localhost:8000/api/";
+dotenv.config();
+
+export const baseURL = process.env.NEXT_PUBLIC_BACKEND_URL;
 
 const instance: AxiosInstance = axios.create({
   baseURL,
