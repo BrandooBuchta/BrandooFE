@@ -137,7 +137,7 @@ const NumberStatisticDetailModal: FC<StatisticDetailModalProps> = ({
   return (
     <Modal
       backdrop="opaque"
-      className="w-1/2 transform translate-x-1/2"
+      className="lg:w-1/2 w-full transform lg:translate-x-1/2"
       isOpen={isOpen}
       motionProps={{
         initial: "hidden",

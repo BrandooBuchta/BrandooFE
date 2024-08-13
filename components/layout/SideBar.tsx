@@ -56,7 +56,7 @@ export const Sidebar: FC<SidebarProps> = ({ isOpen, isDark }) => {
 
   return (
     <aside
-      className={`flex flex-col justify-between fixed top-0 left-0 h-full w-64 pt-16 shadow-2xl transform transition-transform duration-300 ease-in-out ${
+      className={`flex-col justify-between fixed flex z-20 top-0 left-0 h-full w-64 pt-16 shadow-2xl transform transition-transform duration-300 ease-in-out ${
         isOpen ? "translate-x-0" : "-translate-x-full"
       } ${isDark ? "bg-stone-950 border-r border-gray-700" : "bg-white"}`}
     >

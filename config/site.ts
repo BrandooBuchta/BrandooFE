@@ -1,7 +1,7 @@
 export type SiteConfig = typeof siteConfig;
 
 export const siteConfig = {
-  name: "Statistify",
+  name: "Brandoo",
   description: "Track statistics and get in touch with people on your website.",
   navItems: [
     {

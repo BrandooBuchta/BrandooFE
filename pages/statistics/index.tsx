@@ -1,5 +1,11 @@
-import { FC, useEffect, useState } from "react";
-import { Button, ButtonGroup, useDisclosure } from "@nextui-org/react";
+import { FC, useEffect, useState, ChangeEvent } from "react";
+import {
+  Button,
+  ButtonGroup,
+  Select,
+  SelectItem,
+  useDisclosure,
+} from "@nextui-org/react";
 import { toast } from "react-toastify";
 import dayjs from "dayjs";
 
@@ -13,9 +19,7 @@ const Statistics: FC = () => {
   const [isClient, setIsClient] = useState(false);
   const [statistics, setStatistics] = useState<Statistic[]>([]);
   const [filteredStatistics, setFilteredStatistics] = useState<Statistic[]>([]);
-  const [currentInterval, setCurrentInterval] = useState<string | null>(
-    "last-week",
-  );
+  const [currentInterval, setCurrentInterval] = useState<string>("last-week");
   const userStore = useUserStore();
   const { onOpenChange, isOpen, onOpen } = useDisclosure();
 
@@ -47,7 +51,7 @@ const Statistics: FC = () => {
     filterStatistics(currentInterval);
   }, [currentInterval, statistics]);
 
-  const filterStatistics = (interval: string | null) => {
+  const filterStatistics = (interval: string) => {
     const now = dayjs();
     let filteredValues: Statistic[] = statistics.map((stat) => ({
       ...stat,
@@ -80,25 +84,54 @@ const Statistics: FC = () => {
     { key: "last-year", title: "Minulý rok" },
   ];
 
+  const handleSelectChange = (event: ChangeEvent<HTMLSelectElement>) => {
+    setCurrentInterval(event.target.value);
+  };
+
   if (!isClient) {
     return null; // or a loading spinner
   }
 
   return (
-    <div className="flex flex-col m-3">
-      <ButtonGroup className="mb-5">
-        {buttons.map((e) => (
-          <Button
-            key={e.key}
-            className="w-1/4"
-            color={currentInterval === e.key ? "primary" : "default"}
-            variant="shadow"
-            onPress={() => setCurrentInterval(e.key)}
+    <div className="flex flex-col m-3 w-full">
+      <div className="flex gap-2">
+        <Button
+          color="primary"
+          endContent={<i className="mdi mdi-plus" />}
+          variant="shadow"
+          onClick={() => onOpen()}
+        >
+          Přidat
+        </Button>
+        <div className="hidden lg:block w-full">
+          <ButtonGroup className="mb-5 w-full">
+            {buttons.map((e) => (
+              <Button
+                key={e.key}
+                className="w-1/4"
+                color={currentInterval === e.key ? "primary" : "default"}
+                variant="shadow"
+                onPress={() => setCurrentInterval(e.key)}
+              >
+                {e.title}
+              </Button>
+            ))}
+          </ButtonGroup>
+        </div>
+        <div className="block lg:hidden mb-5 w-full">
+          <Select
+            placeholder="Vyberte období"
+            value={currentInterval || undefined} // Ensure value is string or undefined
+            onChange={handleSelectChange}
           >
-            {e.title}
-          </Button>
-        ))}
-      </ButtonGroup>
+            {buttons.map((e) => (
+              <SelectItem key={e.key} value={e.key}>
+                {e.title}
+              </SelectItem>
+            ))}
+          </Select>
+        </div>
+      </div>
       <div className="flex gap-5 flex-wrap">
         <StatisticModal
           isOpen={isOpen}
@@ -112,15 +145,6 @@ const Statistics: FC = () => {
             statistic={s}
           />
         ))}
-        <Button
-          isIconOnly
-          aria-label="Like"
-          color="danger"
-          size="lg"
-          onClick={() => onOpen()}
-        >
-          <i className="mdi mdi-plus text-3xl" />
-        </Button>
       </div>
     </div>
   );

@@ -143,17 +143,6 @@ const ContactsTable: FC = () => {
     }
   };
 
-  const deleteContact = async (id: string) => {
-    try {
-      userStore.token?.authToken &&
-        setAuthTokenHeader(userStore.token?.authToken);
-      await api.delete(`contacts/delete-contact/${id}`);
-      await getContacts();
-    } catch (error) {
-      toast.error(`${error}`);
-    }
-  };
-
   const getForms = async () => {
     try {
       userStore.token?.authToken &&
@@ -258,7 +247,9 @@ const ContactsTable: FC = () => {
                     className="mb-1"
                     classNames={{
                       base: `bg-${l.color}-${theme === "dark" ? "900" : "300"}`,
-                      content: `text-${l.color}-${theme === "dark" ? "300" : "500"}`,
+                      content: `text-${l.color}-${
+                        theme === "dark" ? "300" : "500"
+                      }`,
                     }}
                     size="sm"
                     variant="flat"
@@ -279,7 +270,6 @@ const ContactsTable: FC = () => {
     setCurrentPage(1);
   }, [contacts, perPage]);
 
-  // TODO: Fix this!
   useEffect(() => {
     const form = forms.find((e) => e.id === currentForm);
 
@@ -321,6 +311,31 @@ const ContactsTable: FC = () => {
     onOpenForm();
   };
 
+  const copyEmails = () => {
+    let selectedContactIds: string[] = [];
+
+    if (selectedKeys === "all") {
+      selectedContactIds = contacts.map((contact) => contact.id);
+    } else {
+      selectedContactIds = Array.isArray(selectedKeys)
+        ? selectedKeys.map((key) => key.toString())
+        : Array.from(selectedKeys).map((key) => key.toString());
+    }
+
+    const selectedContacts = contacts.filter((contact) =>
+      selectedContactIds.includes(contact.id),
+    );
+
+    const emails = selectedContacts.map((contact) => contact.email).join(", ");
+
+    navigator.clipboard
+      .writeText(emails)
+      .then(() =>
+        toast.success("Emailové adresy byly zkopírovány do schránky."),
+      )
+      .catch(() => toast.error("Nepodařilo se zkopírovat emailové adresy."));
+  };
+
   return (
     <>
       <FormModal
@@ -333,12 +348,16 @@ const ContactsTable: FC = () => {
         <Button
           color="primary"
           endContent={<i className="mdi mdi-plus" />}
+          size="lg"
           variant="shadow"
           onClick={() => addForm()}
         >
-          Přidat formulář
+          Přidat
         </Button>
+
+        {/* Tabs for large screens */}
         <Tabs
+          className="hidden lg:block"
           color="primary"
           onSelectionChange={(e) => setCurrentForm(e as string)}
         >
@@ -363,7 +382,27 @@ const ContactsTable: FC = () => {
             />
           ))}
         </Tabs>
+
+        {/* Select for small screens */}
+        <Select
+          className="lg:hidden"
+          label="Vyberte formulář"
+          selectedKeys={new Set([currentForm])}
+          size="sm"
+          onSelectionChange={(e) => {
+            const selectedValue = Array.from(e)[0];
+
+            setCurrentForm(selectedValue as string);
+          }}
+        >
+          {[{ name: "Všechny", id: "all" }, ...forms].map((e) => (
+            <SelectItem key={e.id} value={e.id}>
+              {e.name}
+            </SelectItem>
+          ))}
+        </Select>
       </div>
+
       <Table
         isHeaderSticky
         aria-label="Example table with custom cells and sorting"
@@ -405,6 +444,14 @@ const ContactsTable: FC = () => {
           )}
         </TableBody>
       </Table>
+      <Button
+        className="mt-3"
+        color="primary"
+        variant="shadow"
+        onClick={copyEmails}
+      >
+        Zkopírovat emailové adresy
+      </Button>
       <div className="flex justify-between align-center mt-3 hidden">
         <Pagination
           showControls

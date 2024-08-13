@@ -38,7 +38,7 @@ export default function DefaultLayout({
         toggleSidebar={toggleSidebar}
       />
       <div
-        className={`flex flex-grow transition-all duration-300 ${sidebarOpen ? "ml-64" : "ml-0"}`}
+        className={`flex flex-grow transition-all duration-300 ${sidebarOpen ? "lg:ml-64 ml-0" : "ml-0"}`}
       >
         <main className="px-4 py-2 w-full">{children}</main>
       </div>

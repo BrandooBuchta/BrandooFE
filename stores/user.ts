@@ -108,7 +108,7 @@ const useUserStore = create<AuthState>()(
       },
     }),
     {
-      name: "statistify-auth-storage",
+      name: "brandoo-auth-storage",
       getStorage: () => localStorage,
     },
   ),
