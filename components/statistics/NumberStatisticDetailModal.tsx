@@ -11,10 +11,10 @@ import {
 import { ApexOptions } from "apexcharts";
 import { useTheme } from "next-themes";
 import dynamic from "next/dynamic";
-import dayjs from "dayjs";
 
 import { StatisticDetailModalProps } from "@/interfaces/statistics";
 
+// Dynamically import the chart to avoid server-side rendering issues
 const Chart = dynamic(() => import("react-apexcharts"), { ssr: false });
 
 const NumberStatisticDetailModal: FC<StatisticDetailModalProps> = ({
@@ -24,12 +24,6 @@ const NumberStatisticDetailModal: FC<StatisticDetailModalProps> = ({
 }) => {
   const { theme } = useTheme();
   const isDark = theme === "dark";
-
-  const slideInFromRight = {
-    hidden: { opacity: 0, x: 100 },
-    visible: { opacity: 1, x: 0 },
-    exit: { opacity: 0, x: 100 },
-  };
 
   const primaryColor = "#006fee";
 
@@ -49,38 +43,53 @@ const NumberStatisticDetailModal: FC<StatisticDetailModalProps> = ({
   const filterData = (interval: string | null) => {
     if (!statistic) return;
 
-    const now = dayjs();
+    const now = new Date();
     let filteredValues = statistic.values;
 
     switch (interval) {
       case "today":
-        filteredValues = statistic.values.filter((value) =>
-          dayjs(value.createdAt).isSame(now, "day"),
+        filteredValues = statistic.values.filter(
+          (value) =>
+            new Date(value.createdAt).toDateString() === now.toDateString(),
         );
         break;
       case "last-week":
-        filteredValues = statistic.values.filter((value) =>
-          dayjs(value.createdAt).isAfter(now.subtract(1, "week")),
+        filteredValues = statistic.values.filter(
+          (value) =>
+            new Date(value.createdAt) >
+            new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000),
         );
         break;
       case "last-month":
-        filteredValues = statistic.values.filter((value) =>
-          dayjs(value.createdAt).isAfter(now.subtract(1, "month")),
+        filteredValues = statistic.values.filter(
+          (value) =>
+            new Date(value.createdAt) >
+            new Date(now.setMonth(now.getMonth() - 1)),
         );
         break;
       case "last-year":
-        filteredValues = statistic.values.filter((value) =>
-          dayjs(value.createdAt).isAfter(now.subtract(1, "year")),
+        filteredValues = statistic.values.filter(
+          (value) =>
+            new Date(value.createdAt) >
+            new Date(now.setFullYear(now.getFullYear() - 1)),
         );
         break;
       default:
         filteredValues = statistic.values;
     }
 
-    const data = filteredValues.map((e, idx) => ({
-      time: e.createdAt,
-      number: idx + 1,
-    }));
+    const data = filteredValues.map((e, idx) => {
+      const date = new Date(e.createdAt);
+      // Convert to ISO string, preserving the local timezone offset
+      const time = new Date(
+        date.getTime() - date.getTimezoneOffset() * 60000,
+      ).toISOString();
+
+      return {
+        time, // Store as string
+        number: idx + 1,
+      };
+    });
 
     setFilteredData(data);
   };
@@ -115,7 +124,7 @@ const NumberStatisticDetailModal: FC<StatisticDetailModalProps> = ({
       {
         name: "Sample Data",
         data: filteredData.map((e) => ({
-          x: dayjs(e.time).format(),
+          x: new Date(e.time), // Convert string back to Date for the chart
           y: e.number,
         })),
         color: primaryColor,
@@ -143,7 +152,11 @@ const NumberStatisticDetailModal: FC<StatisticDetailModalProps> = ({
         initial: "hidden",
         animate: "visible",
         exit: "hidden",
-        variants: slideInFromRight,
+        variants: {
+          hidden: { opacity: 0, x: 100 },
+          visible: { opacity: 1, x: 0 },
+          exit: { opacity: 0, x: 100 },
+        },
         transition: { duration: 0.3 },
       }}
       size="full"
@@ -158,7 +171,6 @@ const NumberStatisticDetailModal: FC<StatisticDetailModalProps> = ({
               </span>
             </ModalHeader>
             <ModalBody>
-              <span className="text-default-800 font-bold text-xl">Title</span>
               <ButtonGroup className="w-full my-2">
                 {buttons.map((e) => (
                   <Button

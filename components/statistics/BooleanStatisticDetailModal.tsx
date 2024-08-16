@@ -77,20 +77,34 @@ const BooleanStatisticDetailModal: FC<StatisticDetailModalProps> = ({
         filteredValues = statistic.values;
     }
 
-    // Mapping filtered data to true and false values
+    // Mapping filtered data to true and false values with timezone correction
     const trueValues = filteredValues
       .filter((value) => value.boolean)
-      .map((e, idx) => ({
-        time: e.createdAt,
-        number: idx + 1,
-      }));
+      .map((e, idx) => {
+        const date = new Date(e.createdAt);
+        const time = new Date(
+          date.getTime() - date.getTimezoneOffset() * 60000,
+        ).toISOString();
+
+        return {
+          time,
+          number: idx + 1,
+        };
+      });
 
     const falseValues = filteredValues
       .filter((value) => !value.boolean)
-      .map((e, idx) => ({
-        time: e.createdAt,
-        number: idx + 1,
-      }));
+      .map((e, idx) => {
+        const date = new Date(e.createdAt);
+        const time = new Date(
+          date.getTime() - date.getTimezoneOffset() * 60000,
+        ).toISOString();
+
+        return {
+          time,
+          number: idx + 1,
+        };
+      });
 
     setFilteredData({ trueValues, falseValues });
   };
@@ -126,17 +140,17 @@ const BooleanStatisticDetailModal: FC<StatisticDetailModalProps> = ({
     },
     series: [
       {
-        name: "True Values",
+        name: "Záporné hodnoty",
         data: filteredData.trueValues.map((e) => ({
           x: new Date(e.time).getTime(),
           y: e.number,
         })),
-        color: dangerColor, // Use NextUI danger color for true values
+        color: dangerColor,
       },
       {
-        name: "False Values",
+        name: "Kladné hodnoty",
         data: filteredData.falseValues.map((e) => ({
-          x: new Date(e.time).getTime(),
+          x: new Date(e.time).getTime(), // Convert string back to Date
           y: e.number,
         })),
         color: primaryColor, // Use NextUI primary color for false values
@@ -179,7 +193,6 @@ const BooleanStatisticDetailModal: FC<StatisticDetailModalProps> = ({
               </span>
             </ModalHeader>
             <ModalBody>
-              <span className="text-default-800 font-bold text-xl">Title</span>
               <ButtonGroup className="w-full my-2">
                 {buttons.map((e) => (
                   <Button

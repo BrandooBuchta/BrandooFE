@@ -77,10 +77,17 @@ const TimeStatisticDetailModal: FC<StatisticDetailModalProps> = ({
         filteredValues = statistic.values;
     }
 
-    const data = filteredValues.map((e) => ({
-      createdAt: e.createdAt,
-      time: e.time,
-    }));
+    const data = filteredValues.map((e) => {
+      const createdAt = new Date(e.createdAt);
+      const correctedCreatedAt = new Date(
+        createdAt.getTime() - createdAt.getTimezoneOffset() * 60000,
+      ).toISOString();
+
+      return {
+        createdAt: correctedCreatedAt,
+        time: e.time,
+      };
+    });
 
     setFilteredData(data);
   };
@@ -117,8 +124,8 @@ const TimeStatisticDetailModal: FC<StatisticDetailModalProps> = ({
       {
         name: "Sample Data",
         data: filteredData.map((e) => [
-          new Date(e.createdAt).getTime(),
-          new Date(`1970-01-01T${e.time}Z`).getTime() / 1000,
+          new Date(e.createdAt).getTime(), // Convert string back to Date
+          new Date(`1970-01-01T${e.time}Z`).getTime() / 1000, // Convert time to seconds
         ]),
         color: primaryColor,
       },

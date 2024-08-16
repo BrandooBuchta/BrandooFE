@@ -11,7 +11,7 @@ import {
 
 dotenv.config();
 // export const baseURL = process.env.NEXT_PUBLIC_BACKEND_URL; // LOCAL URL?
-export const baseURL = process.env.NEXT_PUBLIC_BACKEND_URL; // PROD URL
+export const baseURL = process.env.NEXT_PUBLIC_BACKEND_URL_PROD; // PROD URL
 // export const baseURL = process.env.NEXT_PUBLIC_BACKEND_URL_DEV; // DEV URL
 
 const instance: AxiosInstance = axios.create({
