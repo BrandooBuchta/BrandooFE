@@ -83,12 +83,19 @@ const useUserStore = create<AuthState>()(
       },
       finishVerification: async (body, id) => {
         try {
-          await api.post(`user/finish-verification/${id}`, body);
+          const { status } = await api.post(
+            `user/finish-verification/${id}`,
+            body,
+          );
+
+          if (status === 404) {
+            toast.error("Kód expiroval.");
+          }
 
           set((state) => ({
             user: state.user ? { ...state.user, isVerified: true } : null,
           }));
-          toast.success("You were successfully verified.");
+          toast.success("Byl jste úspěšně verifikován.");
         } catch (error) {
           toast.error(`${error}`);
         }
