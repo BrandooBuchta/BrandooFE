@@ -10,7 +10,6 @@ export interface SignInRequest {
 
 export interface Token {
   authToken: string;
-  constantAccessToken: string;
   expiresAt: string;
   userId: string;
   id: string;

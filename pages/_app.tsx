@@ -1,4 +1,5 @@
 import type { AppProps } from "next/app";
+
 import "react-toastify/dist/ReactToastify.css";
 import { NextUIProvider } from "@nextui-org/react";
 import { ThemeProvider as NextThemesProvider } from "next-themes";
@@ -31,9 +32,11 @@ export default function App({ Component, pageProps }: AppProps) {
   const userStore = useUserStore();
 
   const mountedAsyncStack = async () => {
-    userStore.token?.authToken && setAuthTokenHeader(userStore.token?.authToken);
+    userStore.token?.authToken &&
+      setAuthTokenHeader(userStore.token?.authToken);
     if (userStore.isLoggedIn) {
       if (router.pathname.includes("auth")) router.push("/dashboard");
+
       return;
     }
     !router.pathname.includes("reset") && router.push("/auth/signin");
@@ -42,6 +45,10 @@ export default function App({ Component, pageProps }: AppProps) {
   useEffect(() => {
     mountedAsyncStack();
   }, [userStore.isLoggedIn]);
+
+  useEffect(() => {
+    if (dayjs().isAfter("2024-09-17T09:26:16.316772")) userStore.signOut();
+  }, [userStore.token?.expiresAt]);
 
   return (
     <NextUIProvider navigate={router.push}>
