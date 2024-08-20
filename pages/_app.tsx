@@ -20,6 +20,8 @@ import { ThemeSwitch } from "@/components/theme-switch";
 import DefaultLayout from "@/layouts/default";
 import { setAuthTokenHeader } from "@/utils/api";
 
+import Cookies from "js-cookie";
+
 // Extend dayjs with utc and timezone plugins
 dayjs.extend(utc);
 dayjs.extend(timezone);
@@ -30,10 +32,10 @@ dayjs.tz.setDefault("Europe/Prague");
 export default function App({ Component, pageProps }: AppProps) {
   const router = useRouter();
   const userStore = useUserStore();
+  const authToken = Cookies.get("authToken");
 
   const mountedAsyncStack = async () => {
-    userStore.token?.authToken &&
-      setAuthTokenHeader(userStore.token?.authToken);
+    authToken && setAuthTokenHeader(authToken);
     if (userStore.isLoggedIn) {
       if (router.pathname.includes("auth")) router.push("/dashboard");
 
@@ -47,8 +49,8 @@ export default function App({ Component, pageProps }: AppProps) {
   }, [userStore.isLoggedIn]);
 
   useEffect(() => {
-    if (dayjs().isAfter("2024-09-17T09:26:16.316772")) userStore.signOut();
-  }, [userStore.token?.expiresAt]);
+    if (dayjs().isAfter(userStore.authTokenExpiresAt)) userStore.signOut();
+  }, [userStore.authTokenExpiresAt]);
 
   return (
     <NextUIProvider navigate={router.push}>

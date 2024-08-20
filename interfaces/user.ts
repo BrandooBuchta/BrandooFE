@@ -1,34 +1,38 @@
-export interface SignInResponse {
-  token: Token;
-  user: User;
-}
-
 export interface SignInRequest {
   email: string;
   password: string;
 }
 
+export interface SignInResponse {
+  security: Security;
+  user: User;
+}
+
+export interface Security {
+  privateKey: string;
+  token: Token;
+}
+
 export interface Token {
   authToken: string;
-  expiresAt: string;
   userId: string;
-  id: string;
+  expiresAt: string;
   createdAt: string;
   updatedAt: string;
 }
 
 export interface User {
+  id: string;
+  contactEmail: any;
+  contactPhone: any;
+  registrationNo: any;
   name: string;
   email: string;
-  type: UserType;
-  id: string;
-  webUrl: string;
   isVerified: boolean;
+  type: string;
+  webUrl: string;
   createdAt: string;
   updatedAt: string;
-  contactEmail: string;
-  contactPhone: string;
-  registrationNo: string;
 }
 
 export enum UserType {

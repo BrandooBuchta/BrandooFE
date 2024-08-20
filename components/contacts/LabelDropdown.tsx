@@ -19,7 +19,7 @@ import { toast } from "react-toastify";
 import { colors } from "./data";
 
 import { cn } from "@/utils/cn";
-import { api, setAuthTokenHeader } from "@/utils/api";
+import { api } from "@/utils/api";
 import useUserStore from "@/stores/user";
 import { Contact, Label } from "@/interfaces/contacts";
 
@@ -56,8 +56,6 @@ export const LabelDropdown: FC<LabelDropdownProps> = ({ contact, refetch }) => {
 
   const onSubmit = async () => {
     try {
-      userStore.token?.authToken &&
-        setAuthTokenHeader(userStore.token?.authToken);
       await api[isEditingModeEnabled ? "put" : "post"](
         `contacts/label/${isEditingModeEnabled ? currentEditedLabelId : userStore.user?.id}`,
         {
@@ -80,8 +78,7 @@ export const LabelDropdown: FC<LabelDropdownProps> = ({ contact, refetch }) => {
 
         await updateContactLabels(filteredContacts);
       }
-      userStore.token?.authToken &&
-        setAuthTokenHeader(userStore.token?.authToken);
+
       await api.delete(`contacts/label/${id}`);
       await getLabels();
     } catch (error) {
@@ -101,8 +98,6 @@ export const LabelDropdown: FC<LabelDropdownProps> = ({ contact, refetch }) => {
 
   const getLabels = async () => {
     try {
-      userStore.token?.authToken &&
-        setAuthTokenHeader(userStore.token?.authToken);
       const { data, status } = await api.get(
         `contacts/labels/${userStore.user?.id}`,
       );
@@ -115,8 +110,6 @@ export const LabelDropdown: FC<LabelDropdownProps> = ({ contact, refetch }) => {
 
   const updateContactLabels = async (labelsToUpdate: string[]) => {
     try {
-      userStore.token?.authToken &&
-        setAuthTokenHeader(userStore.token?.authToken);
       await api.put(`contacts/update-contact-labels/${contact.id}`, {
         labels: labelsToUpdate,
       });

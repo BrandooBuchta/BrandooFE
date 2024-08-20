@@ -10,7 +10,7 @@ import { toast } from "react-toastify";
 import dayjs from "dayjs";
 
 import StatisticCard from "@/components/statistics/StatisticCard";
-import { api, setAuthTokenHeader } from "@/utils/api";
+import { api } from "@/utils/api";
 import useUserStore from "@/stores/user";
 import { Statistic } from "@/interfaces/statistics";
 import StatisticModal from "@/components/statistics/StatisticModal";
@@ -25,10 +25,6 @@ const Statistics: FC = () => {
 
   const getUsersStatistics = async () => {
     try {
-      if (userStore.token?.authToken) {
-        setAuthTokenHeader(userStore.token?.authToken);
-      }
-
       const { data: usersStatistics } = await api.get<Statistic[]>(
         `statistics/get-users-statistics/${userStore.user?.id}`,
       );

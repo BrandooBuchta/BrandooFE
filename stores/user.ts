@@ -1,26 +1,26 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
+import Cookies from "js-cookie";
 import { toast } from "react-toastify";
 import QueryString from "qs";
 
 import {
   User,
-  Token,
   SignInRequest,
   SignInResponse,
   ResetPasswordFinishBody,
   UserFormInfo,
 } from "@/interfaces/user";
-import { api, setAuthTokenHeader } from "@/utils/api";
+import { api } from "@/utils/api";
 
 interface AuthState {
   isLoggedIn: boolean;
   isDevMode: boolean;
   setIsDevMode: () => void;
   user: User | null;
+  authTokenExpiresAt: string | null;
   signIn: (signInInput: SignInRequest) => Promise<void>;
   signOut: () => void;
-  token: Token | null;
   resetPassword: (body: { email: string }) => Promise<void>;
   resetPasswordFinish: (body: ResetPasswordFinishBody) => Promise<void>;
   startVerification: (id: string) => Promise<void>;
@@ -33,29 +33,41 @@ const useUserStore = create<AuthState>()(
     (set, get) => ({
       isLoggedIn: false,
       user: null,
-      token: null,
+      authTokenExpiresAt: null,
       isDevMode: false,
       signIn: async (signInInput: SignInRequest) => {
         try {
           const {
-            data: { user, token },
+            data: { user, security },
           } = await api.post<SignInResponse>("user/sign-in", signInInput);
 
-          setAuthTokenHeader(token.authToken);
+          Cookies.set("authToken", security.token.authToken, {
+            expires: new Date(security.token.expiresAt),
+            secure: true,
+            sameSite: "strict",
+          });
+
+          Cookies.set("privateKey", security.privateKey, {
+            expires: new Date(security.token.expiresAt),
+            secure: true,
+            sameSite: "strict",
+          });
+
           set({
             isLoggedIn: true,
             user,
-            token,
           });
         } catch (error) {
           toast.error(`${error}`);
         }
       },
       signOut: () => {
+        // Vymažeme auth token z cookies
+        Cookies.remove("authToken");
+
         set({
           isLoggedIn: false,
           user: null,
-          token: null,
         });
       },
       resetPassword: async (body) => {
@@ -116,7 +128,7 @@ const useUserStore = create<AuthState>()(
     }),
     {
       name: "brandoo-auth-storage",
-      getStorage: () => localStorage,
+      getStorage: () => localStorage, // Použijeme localStorage pro ukládání uživatele
     },
   ),
 );

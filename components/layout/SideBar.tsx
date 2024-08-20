@@ -6,7 +6,7 @@ import { MenuItem } from "./MenuItem";
 
 import { Link } from "@/interfaces/link";
 import useUserStore from "@/stores/user";
-import { api, setAuthTokenHeader } from "@/utils/api";
+import { api } from "@/utils/api";
 
 interface SidebarProps {
   isOpen: boolean;
@@ -21,8 +21,6 @@ export const Sidebar: FC<SidebarProps> = ({ isOpen, isDark }) => {
 
   const getUnseenMessages = async () => {
     try {
-      userStore.token?.authToken &&
-        setAuthTokenHeader(userStore.token?.authToken);
       const { data } = await api.get<number>(
         `contacts/get-unseen-contacts/${userStore.user?.id}`,
       );

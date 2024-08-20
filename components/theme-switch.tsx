@@ -6,7 +6,7 @@ import clsx from "clsx";
 
 import { SunFilledIcon, MoonFilledIcon } from "@/components/icons";
 import useUserStore from "@/stores/user";
-import { api, setAuthTokenHeader } from "@/utils/api";
+import { api } from "@/utils/api";
 
 export interface ThemeSwitchProps {
   className?: string;
@@ -50,10 +50,6 @@ export const ThemeSwitch: FC<ThemeSwitchProps> = ({
 
   const sendDarkMode = async () => {
     try {
-      if (userStore.token?.authToken) {
-        setAuthTokenHeader(userStore.token?.authToken);
-      }
-
       await api.post(
         `statistics/push-statistic-value/c7b1d9e9-a727-4fae-8ace-9aad6fdd50db`,
         {

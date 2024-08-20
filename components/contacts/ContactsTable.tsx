@@ -26,7 +26,7 @@ import ContactModal from "./ContactModal";
 import FormModal from "./FormModal";
 
 import { Contact, Form, Label } from "@/interfaces/contacts";
-import { api, setAuthTokenHeader } from "@/utils/api";
+import { api } from "@/utils/api";
 import useUserStore from "@/stores/user";
 
 const INITIAL_VISIBLE_COLUMNS = [
@@ -131,8 +131,6 @@ const ContactsTable: FC = () => {
 
   const getLabels = async () => {
     try {
-      userStore.token?.authToken &&
-        setAuthTokenHeader(userStore.token?.authToken);
       const { data, status } = await api.get(
         `contacts/labels/${userStore.user?.id}`,
       );
@@ -145,8 +143,6 @@ const ContactsTable: FC = () => {
 
   const getForms = async () => {
     try {
-      userStore.token?.authToken &&
-        setAuthTokenHeader(userStore.token?.authToken);
       const { data } = await api.get<Form[]>(
         `contacts/forms/${userStore.user?.id}`,
       );

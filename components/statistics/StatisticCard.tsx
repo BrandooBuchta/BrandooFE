@@ -26,7 +26,6 @@ import TimeStatisticDetailModal from "./TimeStatisticDetailModal";
 
 import { Statistic, StatisticType } from "@/interfaces/statistics";
 import useUserStore from "@/stores/user";
-import { api, setAuthTokenHeader } from "@/utils/api";
 
 interface StatisticProps {
   statistic: Statistic;
@@ -54,9 +53,6 @@ const StatisticCard: FC<StatisticProps> = ({ statistic, refetch }) => {
 
   const deleteStatistic = async () => {
     try {
-      if (userStore.token?.authToken) {
-        setAuthTokenHeader(userStore.token?.authToken);
-      }
 
       await api.delete(`statistics/delete-statistic/${statistic.id}`);
       toast.success("Success!");

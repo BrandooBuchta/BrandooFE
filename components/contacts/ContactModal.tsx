@@ -15,7 +15,7 @@ import LabelDropdown from "./LabelDropdown";
 
 import { Contact } from "@/interfaces/contacts";
 import useUserStore from "@/stores/user";
-import { api, setAuthTokenHeader } from "@/utils/api";
+import { api } from "@/utils/api";
 import { SELECT_FORM_PROPERTIES } from "@/constants/contact";
 
 interface ContactModalProps {
@@ -45,8 +45,6 @@ const ContactModal: FC<ContactModalProps> = ({
 
   const getContact = async () => {
     try {
-      userStore.token?.authToken &&
-        setAuthTokenHeader(userStore.token?.authToken);
       const { data } = await api.get<Contact>(
         `contacts/get-contact/${contactId}`,
       );
@@ -60,8 +58,6 @@ const ContactModal: FC<ContactModalProps> = ({
 
   const hasReadInitialMessage = async () => {
     try {
-      userStore.token?.authToken &&
-        setAuthTokenHeader(userStore.token?.authToken);
       await api.put(`contacts/has-read-initial-message/${contactId}`);
     } catch (error) {
       toast.error(`${error}`);
@@ -70,8 +66,6 @@ const ContactModal: FC<ContactModalProps> = ({
 
   const updateDescription = async () => {
     try {
-      userStore.token?.authToken &&
-        setAuthTokenHeader(userStore.token?.authToken);
       await api.put(`contacts/update-contact-description/${contactId}`, {
         description,
       });
@@ -99,8 +93,6 @@ const ContactModal: FC<ContactModalProps> = ({
 
   const deleteContact = async (id: string) => {
     try {
-      userStore.token?.authToken &&
-        setAuthTokenHeader(userStore.token?.authToken);
       await api.delete(`contacts/delete-contact/${id}`);
       await refetch();
     } catch (error) {

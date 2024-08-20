@@ -16,7 +16,7 @@ import { toast } from "react-toastify";
 
 import IconSelect from "./IconSelect";
 
-import { api, setAuthTokenHeader } from "@/utils/api";
+import { api } from "@/utils/api";
 import useUserStore from "@/stores/user";
 import { Statistic } from "@/interfaces/statistics";
 
@@ -79,10 +79,6 @@ const StatisticModal: FC<StatisticProps> = ({
 
   const createStatistic = async (data: FormValues) => {
     try {
-      if (userStore.token?.authToken) {
-        setAuthTokenHeader(userStore.token?.authToken);
-      }
-
       if (statistic) {
         await api.put(`statistics/update-statistic/${statistic.id}`, data);
       } else {
