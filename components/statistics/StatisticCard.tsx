@@ -26,6 +26,7 @@ import TimeStatisticDetailModal from "./TimeStatisticDetailModal";
 
 import { Statistic, StatisticType } from "@/interfaces/statistics";
 import useUserStore from "@/stores/user";
+import { api } from "@/utils/api";
 
 interface StatisticProps {
   statistic: Statistic;
