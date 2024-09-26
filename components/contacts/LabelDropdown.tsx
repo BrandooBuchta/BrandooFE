@@ -15,24 +15,31 @@ import {
 } from "@nextui-org/react";
 import { useTheme } from "next-themes";
 import { toast } from "react-toastify";
+import { AxiosError } from "axios";
 
 import { colors } from "./data";
 
 import { cn } from "@/utils/cn";
 import { api } from "@/utils/api";
 import useUserStore from "@/stores/user";
-import { Contact, Label } from "@/interfaces/contacts";
+import { Label } from "@/interfaces/contacts";
+import { DetailedResponse } from "@/interfaces/form";
 
 interface LabelDropdownProps {
-  contact: Contact;
+  response: DetailedResponse;
   refetch?: () => Promise<void>;
+  responseId: string;
 }
 
-export const LabelDropdown: FC<LabelDropdownProps> = ({ contact, refetch }) => {
+export const LabelDropdown: FC<LabelDropdownProps> = ({
+  response,
+  refetch,
+  responseId,
+}) => {
   const dropdownRef = useRef<HTMLDivElement | null>(null);
   const [labels, setLabels] = useState<Label[]>([]);
   const [selectedLabels, setSelectedLabels] = useState<Set<string>>(
-    new Set([...contact.labels]),
+    new Set([...response.labels]),
   );
 
   const [isEditingModeEnabled, setIsEditingModeEnabled] =
@@ -57,7 +64,7 @@ export const LabelDropdown: FC<LabelDropdownProps> = ({ contact, refetch }) => {
   const onSubmit = async () => {
     try {
       await api[isEditingModeEnabled ? "put" : "post"](
-        `contacts/label/${isEditingModeEnabled ? currentEditedLabelId : userStore.user?.id}`,
+        `label/${isEditingModeEnabled ? currentEditedLabelId : userStore.user?.id}`,
         {
           title,
           color: selectedColor,
@@ -73,13 +80,13 @@ export const LabelDropdown: FC<LabelDropdownProps> = ({ contact, refetch }) => {
 
   const deleteLabel = async (id: string) => {
     try {
-      if (contact.labels.includes(id)) {
-        const filteredContacts = contact.labels.filter((e) => e !== id);
+      if (response.labels.includes(id)) {
+        const filteredContacts = response.labels.filter((e) => e !== id);
 
         await updateContactLabels(filteredContacts);
       }
 
-      await api.delete(`contacts/label/${id}`);
+      await api.delete(`label/${id}`);
       await getLabels();
     } catch (error) {
       toast.error(`${error}`);
@@ -98,19 +105,17 @@ export const LabelDropdown: FC<LabelDropdownProps> = ({ contact, refetch }) => {
 
   const getLabels = async () => {
     try {
-      const { data, status } = await api.get(
-        `contacts/labels/${userStore.user?.id}`,
-      );
+      const { data, status } = await api.get(`label/user/${userStore.user?.id}`);
 
       setLabels(status === 404 ? [] : data);
-    } catch (error: any) {
-      error.response.status !== 404 && toast.error(`${error}`);
+    } catch (error) {
+      (error as AxiosError).code !== "404" && toast.error(`${error}`);
     }
   };
 
   const updateContactLabels = async (labelsToUpdate: string[]) => {
     try {
-      await api.put(`contacts/update-contact-labels/${contact.id}`, {
+      await api.put(`forms/update-contact-labels/${responseId}`, {
         labels: labelsToUpdate,
       });
       refetch && (await refetch());
@@ -156,7 +161,7 @@ export const LabelDropdown: FC<LabelDropdownProps> = ({ contact, refetch }) => {
     <>
       <div className="flex flex-wrap gap-2">
         {labels
-          .filter((label) => contact.labels.includes(label.id))
+          .filter((label) => response.labels.includes(label.id))
           .map((label) => (
             <div key={label.id}>
               {wordColors.includes(label.color) ? (
@@ -209,7 +214,6 @@ export const LabelDropdown: FC<LabelDropdownProps> = ({ contact, refetch }) => {
             >
               <DropdownItem key="new">
                 <Listbox
-                  disallowEmptySelection
                   aria-label="Multiple selection example"
                   selectedKeys={selectedLabels}
                   selectionMode={isEditingModeEnabled ? "none" : "multiple"}

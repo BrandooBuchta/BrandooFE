@@ -1,6 +1,7 @@
 import { FC, useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import { Switch } from "@nextui-org/react";
+import Cookies from "js-cookie";
 
 import { MenuItem } from "./MenuItem";
 
@@ -18,11 +19,12 @@ export const Sidebar: FC<SidebarProps> = ({ isOpen, isDark }) => {
   const [mounted, setMounted] = useState(false);
   const userStore = useUserStore();
   const [unseenContacts, setUnseenContacts] = useState<number>();
+  const authToken = Cookies.get("authToken");
 
   const getUnseenMessages = async () => {
     try {
       const { data } = await api.get<number>(
-        `contacts/get-unseen-contacts/${userStore.user?.id}`,
+        `forms/unseen-responses/${userStore.user?.id}`,
       );
 
       setUnseenContacts(data);
@@ -32,9 +34,12 @@ export const Sidebar: FC<SidebarProps> = ({ isOpen, isDark }) => {
   };
 
   useEffect(() => {
-    getUnseenMessages();
     setMounted(true);
   }, []);
+
+  useEffect(() => {
+    if (mounted && authToken) getUnseenMessages();
+  }, [mounted, authToken]);
 
   if (!mounted) return null;
 
@@ -49,6 +54,11 @@ export const Sidebar: FC<SidebarProps> = ({ isOpen, isDark }) => {
       href: "/contacts",
       icon: "card-account-mail",
       value: unseenContacts,
+    },
+    {
+      name: "Správa obsahu",
+      href: "/cms",
+      icon: "content-save-edit",
     },
   ];
 

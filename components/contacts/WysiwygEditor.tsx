@@ -6,28 +6,70 @@ import React, {
   SetStateAction,
   FC,
 } from "react";
-import { Button, Card, CardBody, Select, SelectItem } from "@nextui-org/react";
+import {
+  Button,
+  Card,
+  CardBody,
+  Input,
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+  Select,
+  SelectItem,
+} from "@nextui-org/react";
 
 interface WysiwygEditorProps {
   content: string;
   setContent: Dispatch<SetStateAction<string>>;
+  onBlur?: () => void; // Optional onBlur prop
 }
 
-const WysiwygEditor: FC<WysiwygEditorProps> = ({ setContent }) => {
+const WysiwygEditor: FC<WysiwygEditorProps> = ({
+  content,
+  setContent,
+  onBlur,
+}) => {
   const [isBold, setIsBold] = useState(false);
   const [isItalic, setIsItalic] = useState(false);
   const [isUnderline, setIsUnderline] = useState(false);
+  const [linkUrl, setLinkUrl] = useState<string>(""); // State for link URL
+  const [isPopoverOpen, setIsPopoverOpen] = useState(false); // State for popover visibility
   const editorRef = useRef<HTMLDivElement | null>(null);
 
-  const formatText = (command: string, value?: string) => {
-    document.execCommand(command, false, value);
-    updateFormattingStates();
-    handleInput();
+  useEffect(() => {
+    if (editorRef.current && editorRef.current.innerHTML !== content) {
+      // Set initial content if it has changed
+      editorRef.current.innerHTML = content;
+    }
+  }, [content]);
+
+  const saveSelection = () => {
+    const selection = window.getSelection();
+
+    if (selection && selection.rangeCount > 0) {
+      const range = selection.getRangeAt(0);
+
+      return { range, selection };
+    }
+
+    return null;
+  };
+
+  const restoreSelection = (saved: { range: Range; selection: Selection }) => {
+    const { range, selection } = saved;
+
+    selection.removeAllRanges();
+    selection.addRange(range);
   };
 
   const handleInput = () => {
     if (editorRef.current) {
+      const savedSelection = saveSelection(); // Save cursor position
+
       setContent(editorRef.current.innerHTML);
+      if (savedSelection) {
+        setTimeout(() => restoreSelection(savedSelection), 0); // Restore cursor after content change
+      }
     }
   };
 
@@ -45,31 +87,9 @@ const WysiwygEditor: FC<WysiwygEditorProps> = ({ setContent }) => {
     };
   }, []);
 
-  const handleTextSizeChange = (key: string) => {
-    const newSize = {
-      "text-xs": "0.75rem",
-      "text-sm": "0.875rem",
-      "text-md": "1rem",
-      "text-lg": "1.125rem",
-      "text-xl": "1.25rem",
-    }[key];
-
-    document.execCommand("fontSize", false, "7");
-    const fontElements = document.getElementsByTagName("font");
-
-    for (let i = 0; i < fontElements.length; i++) {
-      if (fontElements[i].size === "7") {
-        fontElements[i].removeAttribute("size");
-        // @ts-ignore
-        fontElements[i].style.fontSize = newSize;
-      }
-    }
-    handleInput();
-  };
-
   const handleAlignment = (align: string) => {
     document.execCommand(align);
-    handleInput();
+    handleInput(); // Update content after alignment
   };
 
   return (
@@ -82,7 +102,7 @@ const WysiwygEditor: FC<WysiwygEditorProps> = ({ setContent }) => {
             size="sm"
             startContent={<i className="mdi mdi-format-bold text-xl" />}
             variant="faded"
-            onClick={() => formatText("bold")}
+            onClick={() => document.execCommand("bold")}
           />
           <Button
             isIconOnly
@@ -90,7 +110,7 @@ const WysiwygEditor: FC<WysiwygEditorProps> = ({ setContent }) => {
             size="sm"
             startContent={<i className="mdi mdi-format-italic text-xl" />}
             variant="faded"
-            onClick={() => formatText("italic")}
+            onClick={() => document.execCommand("italic")}
           />
           <Button
             isIconOnly
@@ -98,15 +118,60 @@ const WysiwygEditor: FC<WysiwygEditorProps> = ({ setContent }) => {
             size="sm"
             startContent={<i className="mdi mdi-format-underline text-xl" />}
             variant="faded"
-            onClick={() => formatText("underline")}
+            onClick={() => document.execCommand("underline")}
           />
+
+          <Popover
+            isOpen={isPopoverOpen}
+            onOpenChange={(open) => {
+              if (open) saveSelection(); // Save selection before popover opens
+              setIsPopoverOpen(open);
+            }}
+          >
+            <PopoverTrigger>
+              <Button
+                isIconOnly
+                size="sm"
+                startContent={<i className="mdi mdi-link-variant text-xl" />}
+                variant="solid"
+              />
+            </PopoverTrigger>
+            <PopoverContent
+              onClick={(e) => {
+                e.preventDefault();
+                e.stopPropagation(); // Prevent text deselection
+              }}
+            >
+              <div className="w-[250px] p-4">
+                <Input
+                  label="URL"
+                  value={linkUrl}
+                  variant="underlined"
+                  onChange={(e) => setLinkUrl(e.target.value)}
+                />
+                <Button
+                  className="mt-2"
+                  color="primary"
+                  size="sm"
+                  onClick={() =>
+                    document.execCommand("createLink", false, linkUrl)
+                  }
+                >
+                  Insert Link
+                </Button>
+              </div>
+            </PopoverContent>
+          </Popover>
+
           <Select
             aria-label="Text Size"
             color="primary"
             placeholder="Select Text Size"
             size="sm"
             variant="faded"
-            onChange={(e) => handleTextSizeChange(e.target.value)}
+            onChange={(e) =>
+              document.execCommand("fontSize", false, e.target.value)
+            }
           >
             <SelectItem key="text-xs" value="text-xs">
               X-Small
@@ -124,6 +189,8 @@ const WysiwygEditor: FC<WysiwygEditorProps> = ({ setContent }) => {
               X-Large
             </SelectItem>
           </Select>
+
+          {/* Alignment Buttons */}
           <Button
             isIconOnly
             size="sm"
@@ -155,9 +222,11 @@ const WysiwygEditor: FC<WysiwygEditorProps> = ({ setContent }) => {
             onClick={() => handleAlignment("justifyFull")}
           />
         </div>
+
         <div
           ref={editorRef}
           contentEditable
+          className="wysiwyg"
           style={{
             height: "300px",
             padding: "15px",
@@ -165,6 +234,7 @@ const WysiwygEditor: FC<WysiwygEditorProps> = ({ setContent }) => {
             color: "black",
             borderRadius: "5px",
           }}
+          onBlur={onBlur}
           onInput={handleInput}
         />
       </CardBody>

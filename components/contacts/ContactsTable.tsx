@@ -20,10 +20,12 @@ import {
 import { toast } from "react-toastify";
 import dayjs from "dayjs";
 import { useTheme } from "next-themes";
+import NextLink from "next/link";
+import Cookies from "js-cookie";
+
+import NewFormModal from "../NewFormModal";
 
 import { columns } from "./data";
-import ContactModal from "./ContactModal";
-import FormModal from "./FormModal";
 
 import { Contact, Form, Label } from "@/interfaces/contacts";
 import { api } from "@/utils/api";
@@ -48,11 +50,11 @@ const INITIAL_VISIBLE_COLUMNS = [
 const ContactsTable: FC = () => {
   const wordColors = ["primary", "warning", "danger", "success"];
   const { theme } = useTheme();
+  const [formId, setFormId] = useState<string>("all");
 
   const [selectedKeys, setSelectedKeys] = useState<Selection>(new Set([]));
-  const [forms, setForms] = useState<Form[]>([]);
+  const [forms, setForms] = useState<{ name: string; id: string }[]>([]);
   const [currentForm, setCurrentForm] = useState<string>("all");
-  const [formToEdit, setFormToEdit] = useState<Form | null>(null);
   const [visibleColumns, setVisibleColumns] = useState<Selection>(
     new Set(INITIAL_VISIBLE_COLUMNS),
   );
@@ -103,6 +105,22 @@ const ContactsTable: FC = () => {
     return nullProperties as string[];
   }
 
+  const getCurrentForm = async (formId: string) => {
+    const privateKey = Cookies.get("privateKey");
+
+    if (!privateKey) return;
+
+    try {
+      await api.get(`forms/form-table/${formId}`, {
+        headers: {
+          "X-Private-Key": privateKey,
+        },
+      });
+    } catch (error) {
+      toast.error(`${error}`);
+    }
+  };
+
   const getContacts = async () => {
     try {
       await getLabels();
@@ -144,7 +162,7 @@ const ContactsTable: FC = () => {
   const getForms = async () => {
     try {
       const { data } = await api.get<Form[]>(
-        `contacts/forms/${userStore.user?.id}`,
+        `forms/get-users-forms/${userStore.user?.id}`,
       );
 
       setForms(data);
@@ -266,46 +284,36 @@ const ContactsTable: FC = () => {
     setCurrentPage(1);
   }, [contacts, perPage]);
 
-  useEffect(() => {
-    const form = forms.find((e) => e.id === currentForm);
+  // useEffect(() => {
+  //   const form = forms.find((e) => e.id === currentForm);
 
-    if (!form) {
-      const filteredColumns = INITIAL_VISIBLE_COLUMNS.filter(
-        (e) =>
-          ![
-            "id",
-            "initialMessage",
-            "agreedToPrivacyPolicy",
-            ...getPropertiesWithAllNull(contacts),
-          ].includes(e),
-      );
+  //   if (!form) {
+  //     const filteredColumns = INITIAL_VISIBLE_COLUMNS.filter(
+  //       (e) =>
+  //         ![
+  //           "id",
+  //           "initialMessage",
+  //           "agreedToPrivacyPolicy",
+  //           ...getPropertiesWithAllNull(contacts),
+  //         ].includes(e),
+  //     );
 
-      setVisibleColumns(new Set(filteredColumns));
+  //     setVisibleColumns(new Set(filteredColumns));
 
-      return;
-    }
-    const filteredColumns = form?.formProperties.filter(
-      (e) =>
-        ![
-          "id",
-          "initialMessage",
-          "agreedToPrivacyPolicy",
-          ...getPropertiesWithAllNull(contacts),
-        ].includes(e),
-    );
+  //     return;
+  //   }
+  //   const filteredColumns = form?.formProperties.filter(
+  //     (e) =>
+  //       ![
+  //         "id",
+  //         "initialMessage",
+  //         "agreedToPrivacyPolicy",
+  //         ...getPropertiesWithAllNull(contacts),
+  //       ].includes(e),
+  //   );
 
-    setVisibleColumns(new Set(filteredColumns));
-  }, [currentForm]);
-
-  const startEdit = (form: Form) => {
-    setFormToEdit(form);
-    onOpenForm();
-  };
-
-  const addForm = () => {
-    setFormToEdit(null);
-    onOpenForm();
-  };
+  //   setVisibleColumns(new Set(filteredColumns));
+  // }, [currentForm]);
 
   const copyEmails = () => {
     let selectedContactIds: string[] = [];
@@ -334,19 +342,14 @@ const ContactsTable: FC = () => {
 
   return (
     <>
-      <FormModal
-        form={formToEdit}
-        isOpen={isOpenForm}
-        refetch={getForms}
-        onOpenChange={onOpenChangeForm}
-      />
+      <NewFormModal isOpen={isOpenForm} onOpenChange={onOpenChangeForm} />
       <div className="flex gap-3 mb-3 items-center">
         <Button
           color="primary"
           endContent={<i className="mdi mdi-plus" />}
           size="lg"
           variant="shadow"
-          onClick={() => addForm()}
+          onClick={() => onOpenForm()}
         >
           Přidat
         </Button>
@@ -366,10 +369,11 @@ const ContactsTable: FC = () => {
                   {e.name}
                   <Button
                     isIconOnly
+                    as={NextLink}
+                    href={`/form/${e.id}`}
                     radius="full"
                     size="sm"
                     variant="light"
-                    onClick={() => startEdit(e)}
                   >
                     <i className="mdi mdi-dots-vertical" />
                   </Button>
@@ -378,8 +382,6 @@ const ContactsTable: FC = () => {
             />
           ))}
         </Tabs>
-
-        {/* Select for small screens */}
         <Select
           className="lg:hidden"
           label="Vyberte formulář"
@@ -473,7 +475,7 @@ const ContactsTable: FC = () => {
           ))}
         </Select>
       </div>
-      {currentContact && (
+      {/* {currentContact && (
         <ContactModal
           contactId={currentContact.id}
           formProperties={
@@ -484,7 +486,7 @@ const ContactsTable: FC = () => {
           refetch={getContacts}
           onOpenChange={onOpenChange}
         />
-      )}
+      )} */}
     </>
   );
 };

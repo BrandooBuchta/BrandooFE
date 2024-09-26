@@ -3,6 +3,8 @@ import { persist } from "zustand/middleware";
 import Cookies from "js-cookie";
 import { toast } from "react-toastify";
 import QueryString from "qs";
+import Router from "next/router";
+import { AxiosError } from "axios";
 
 import {
   User,
@@ -10,6 +12,7 @@ import {
   SignInResponse,
   ResetPasswordFinishBody,
   UserFormInfo,
+  SignUpRequest,
 } from "@/interfaces/user";
 import { api } from "@/utils/api";
 
@@ -20,6 +23,7 @@ interface AuthState {
   user: User | null;
   authTokenExpiresAt: string | null;
   signIn: (signInInput: SignInRequest) => Promise<void>;
+  signUp: (input: SignUpRequest) => Promise<void>;
   signOut: () => void;
   resetPassword: (body: { email: string }) => Promise<void>;
   resetPasswordFinish: (body: ResetPasswordFinishBody) => Promise<void>;
@@ -69,6 +73,23 @@ const useUserStore = create<AuthState>()(
           isLoggedIn: false,
           user: null,
         });
+      },
+      signUp: async (input) => {
+        try {
+          const { data } = await api.post("user/create", {
+            ...input,
+            type: "USER",
+          });
+
+          console.log(data);
+
+          Router.push("/auth/signin");
+        } catch (error) {
+          const { detail }: { detail: string } = (error as AxiosError).response
+            ?.data as { detail: string };
+
+          toast.error(detail);
+        }
       },
       resetPassword: async (body) => {
         try {

@@ -54,8 +54,18 @@ const StatisticCard: FC<StatisticProps> = ({ statistic, refetch }) => {
 
   const deleteStatistic = async () => {
     try {
-
       await api.delete(`statistics/delete-statistic/${statistic.id}`);
+      toast.success("Success!");
+
+      refetch && (await refetch());
+    } catch (error) {
+      toast.error(`${error}`);
+    }
+  };
+
+  const resetStatistic = async () => {
+    try {
+      await api.delete(`statistics/reset/${statistic.id}`);
       toast.success("Success!");
 
       refetch && (await refetch());
@@ -234,6 +244,16 @@ const StatisticCard: FC<StatisticProps> = ({ statistic, refetch }) => {
                   onPress={() => deleteStatistic()}
                 >
                   Smazat
+                </DropdownItem>
+                <DropdownItem
+                  key="delete"
+                  className="text-danger"
+                  color="danger"
+                  description="Vynulování celé statistiky"
+                  startContent={<i className="mdi mdi-restart text-xl mr-2" />}
+                  onPress={() => resetStatistic()}
+                >
+                  Resetovat
                 </DropdownItem>
               </DropdownSection>
             </DropdownMenu>

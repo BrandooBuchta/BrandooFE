@@ -1,7 +1,7 @@
 import { FC, useEffect, useState } from "react";
 import { useDisclosure } from "@nextui-org/react";
 
-import ContactsTable from "@/components/contacts/ContactsTable";
+import FormTableComponent from "@/components/contacts/FormTableComponent";
 import UserFormInfoModal from "@/components/contacts/UserFormInfoModal";
 import useUserStore from "@/stores/user";
 
@@ -26,7 +26,7 @@ const Contacts: FC = () => {
   return (
     <div>
       <UserFormInfoModal isOpen={isOpen} onOpenChange={onOpenChange} />
-      <ContactsTable />
+      <FormTableComponent />
     </div>
   );
 };

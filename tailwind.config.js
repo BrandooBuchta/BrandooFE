@@ -33,6 +33,7 @@ module.exports = {
     'bg-yellow-500', 'bg-yellow-900', 'bg-yellow-300',
     'bg-cyan-500', 'bg-cyan-900', 'bg-cyan-300',
     'bg-zinc-500', 'bg-zinc-900', 'bg-zinc-300',
+    'text-lg', 'text-sm', 'text-md'
   ],
   theme: {
     extend: {},

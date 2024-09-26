@@ -29,7 +29,7 @@ const ResetPassword: FC = () => {
       <div className="flex h-screen">
         <div className="flex-1 flex justify-center items-center">
           <Card className="p-5 w-80 h-fit gap-5">
-            <h2 className="font-bold text-2xl text-center">Sign In</h2>
+            <h2 className="font-bold text-2xl text-center">Přihlásit se</h2>
             <form onSubmit={handleSubmit(onSubmit)}>
               <div className="mb-4">
                 <Input
@@ -37,7 +37,7 @@ const ResetPassword: FC = () => {
                   label="Email"
                   type="email"
                   variant="underlined"
-                  {...register("email", { required: "Email is required" })}
+                  {...register("email", { required: "Email je požadován" })}
                   errorMessage={errors.email?.message}
                 />
               </div>
@@ -49,7 +49,7 @@ const ResetPassword: FC = () => {
                   type="submit"
                   variant="shadow"
                 >
-                  Reset password
+                  Resetovat heslo
                 </Button>
               </div>
             </form>

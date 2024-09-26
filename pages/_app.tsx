@@ -41,7 +41,9 @@ export default function App({ Component, pageProps }: AppProps) {
 
       return;
     }
-    !router.pathname.includes("reset") && router.push("/auth/signin");
+    !(
+      router.pathname.includes("reset") || router.pathname.includes("signup")
+    ) && router.push("/auth/signin");
   };
 
   useEffect(() => {

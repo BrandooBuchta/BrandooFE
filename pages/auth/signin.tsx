@@ -4,22 +4,18 @@ import { Button, Card, Input } from "@nextui-org/react";
 import NextLink from "next/link";
 
 import useUserStore from "@/stores/user";
-
-interface FormValues {
-  email: string;
-  password: string;
-}
+import { SignInRequest } from "@/interfaces/user";
 
 const SignIn: FC = () => {
   const {
     register,
     handleSubmit,
     formState: { errors },
-  } = useForm<FormValues>();
+  } = useForm<SignInRequest>();
 
   const { signIn } = useUserStore();
 
-  const onSubmit: SubmitHandler<FormValues> = (data) => {
+  const onSubmit: SubmitHandler<SignInRequest> = async (data) => {
     signIn(data);
   };
 
@@ -28,7 +24,7 @@ const SignIn: FC = () => {
       <div className="flex h-screen">
         <div className="flex-1 flex justify-center items-center">
           <Card className="p-5 w-80 h-fit gap-5">
-            <h2 className="font-bold text-2xl text-center">Sign In</h2>
+            <h2 className="font-bold text-2xl text-center">Přihlášení</h2>
             <form onSubmit={handleSubmit(onSubmit)}>
               <div className="mb-4">
                 <Input
@@ -36,18 +32,18 @@ const SignIn: FC = () => {
                   label="Email"
                   type="email"
                   variant="underlined"
-                  {...register("email", { required: "Email is required" })}
+                  {...register("email", { required: "Email je požadován" })}
                   errorMessage={errors.email?.message}
                 />
               </div>
               <div className="mb-4">
                 <Input
                   color="primary"
-                  label="Password"
+                  label="Heslo"
                   type="password"
                   variant="underlined"
                   {...register("password", {
-                    required: "Password is required",
+                    required: "Heslo je požadováno.",
                   })}
                   errorMessage={errors.password?.message}
                 />
@@ -60,14 +56,14 @@ const SignIn: FC = () => {
                   type="submit"
                   variant="shadow"
                 >
-                  Sign In
+                  Přihlásit se
                 </Button>
                 <NextLink href="/auth/reset-password">
                   <h6
                     className="mt-4 text-xs text-right"
                     style={{ color: "#0072F5" }}
                   >
-                    Reset password
+                    Resetovat heslo
                   </h6>
                 </NextLink>
               </div>

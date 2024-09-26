@@ -3,6 +3,14 @@ export interface SignInRequest {
   password: string;
 }
 
+export interface SignUpRequest {
+  email: string;
+  name: string;
+  webUrl: string;
+  password: string;
+  code: string;
+}
+
 export interface SignInResponse {
   security: Security;
   user: User;

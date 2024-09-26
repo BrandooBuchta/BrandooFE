@@ -72,7 +72,9 @@ const ResetPasswordEmail: FC = () => {
         <div className="flex-1 flex justify-center items-center">
           <Card className="p-5 w-80 h-fit gap-5">
             <div>
-              <h2 className="font-bold text-2xl text-center">Reset Password</h2>
+              <h2 className="font-bold text-2xl text-center">
+                Resetovat heslo
+              </h2>
               <h3 className="text-sm text-center my-2">
                 We`ve sent you a code on {email}
               </h3>
@@ -98,11 +100,11 @@ const ResetPasswordEmail: FC = () => {
                     >
                       <Input
                         color="primary"
-                        label="Password"
+                        label="Heslo"
                         type="password"
                         variant="underlined"
                         {...register("password", {
-                          required: "Password is required",
+                          required: "Heslo je požadováno",
                         })}
                         errorMessage={errors.password?.message}
                       />
@@ -123,7 +125,7 @@ const ResetPasswordEmail: FC = () => {
                         type="submit"
                         variant="shadow"
                       >
-                        Reset password
+                        Resetovat heslo
                       </Button>
                     </motion.div>
                   )}
