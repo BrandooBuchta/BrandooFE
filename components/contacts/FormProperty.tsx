@@ -145,17 +145,25 @@ const FormProperty: FC<FormPropertyProps> = ({
       <div className="w-full p-3">
         <Divider />
         <div className="flex justify-end space-x-3 w-full h-full p-3">
-          <Switch isSelected={isRequired} onChange={handleRequiredChange}>
+          <Switch
+            isDisabled={property.key === "privacyPolicy"}
+            isSelected={isRequired}
+            onChange={handleRequiredChange}
+          >
             Povinné
           </Switch>
-          <Divider className="h-[40px] ml-5" orientation="vertical" />
-          <Button
-            isIconOnly
-            color="danger"
-            radius="full"
-            startContent={<i className="mdi mdi-delete text-xl" />}
-            onClick={() => deleteFormProperty(property.id)}
-          />
+          {property.key !== "privacyPolicy" && (
+            <>
+              <Divider className="h-[40px] ml-5" orientation="vertical" />
+              <Button
+                isIconOnly
+                color="danger"
+                radius="full"
+                startContent={<i className="mdi mdi-delete text-xl" />}
+                onClick={() => deleteFormProperty(property.id)}
+              />
+            </>
+          )}
         </div>
       </div>
     </Card>

@@ -84,8 +84,6 @@ const useContentStore = create<ContentState>((set) => ({
         `contents/root/users/${userId}`,
       );
 
-      console.log("data: ", data);
-
       set(() => ({
         contents: data,
       }));

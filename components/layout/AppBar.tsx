@@ -9,6 +9,7 @@ import {
   Button,
   Badge,
   useDisclosure,
+  Spinner,
 } from "@nextui-org/react";
 import NextLink from "next/link";
 import { FC, useEffect, useState } from "react";
@@ -16,7 +17,6 @@ import { useTheme } from "next-themes";
 
 import VerificationModal from "./VerificationModal";
 
-import { Logo } from "@/components/icons";
 import useUserStore from "@/stores/user";
 
 interface AppBarProps {
@@ -52,7 +52,15 @@ export const AppBar: FC<AppBarProps> = ({ toggleSidebar }) => {
       <NavbarContent className="basis-1/5 sm:basis-full" justify="start">
         <NavbarBrand className="gap-3 max-w-fit">
           <NextLink className="flex justify-start items-center gap-1" href="/">
-            <Logo />
+            {mounted && theme ? (
+              <img
+                alt="logo"
+                className="w-[100px] drop-shadow-[0_0_10px_rgba(255,255,255,0.1)] mr-3"
+                src={`/brandoo-logo-${theme}.svg`}
+              />
+            ) : (
+              <Spinner />
+            )}
           </NextLink>
         </NavbarBrand>
         <Divider className="h-1/2" orientation="vertical" />

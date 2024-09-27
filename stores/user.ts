@@ -76,12 +76,10 @@ const useUserStore = create<AuthState>()(
       },
       signUp: async (input) => {
         try {
-          const { data } = await api.post("user/create", {
+          await api.post("user/create", {
             ...input,
             type: "USER",
           });
-
-          console.log(data);
 
           Router.push("/auth/signin");
         } catch (error) {

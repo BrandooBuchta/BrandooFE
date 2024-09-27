@@ -79,7 +79,7 @@ const NewFormModal: FC<NewFormModalProps> = ({ onOpenChange, isOpen }) => {
               }
             />
             <AsyncButton color="primary" onPress={() => onSubmit()}>
-              Odeslat
+              Vytvořit
             </AsyncButton>
           </div>
         </>

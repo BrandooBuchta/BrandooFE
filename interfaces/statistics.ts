@@ -2,7 +2,7 @@ export interface Statistic {
   id: string;
   userId: string;
   name: string;
-  icon: string;
+  icon?: string;
   type: StatisticType;
   values: StatisticValue[];
   description: string;

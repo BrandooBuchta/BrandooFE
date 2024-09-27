@@ -81,13 +81,13 @@ const FormTableComponent: FC = () => {
 
   const getUsersForms = async () => {
     try {
-      const { data } = await api.get<{ id: string; name: string }[]>(
+      const { data, status } = await api.get<{ id: string; name: string }[]>(
         `forms/get-users-forms/${userStore.user?.id}`,
       );
 
-      setForms(data);
-    } catch (error) {
-      toast.error(`${error}`);
+      setForms(status === 404 ? [] : data);
+    } catch (error: any) {
+      error.response.status !== 404 && toast.error(`${error}`);
     }
   };
 
@@ -122,8 +122,8 @@ const FormTableComponent: FC = () => {
       );
 
       setFormTableData(data);
-    } catch (error) {
-      toast.error(`${error}`);
+    } catch (error: any) {
+      error.response.status !== 404 && toast.error(`${error}`);
     }
   };
 
@@ -169,6 +169,7 @@ const FormTableComponent: FC = () => {
 
   useEffect(() => {
     getUsersForms();
+    getLabels();
   }, []);
 
   useEffect(() => {
@@ -199,7 +200,7 @@ const FormTableComponent: FC = () => {
             variant="shadow"
             onClick={() => onOpenForm()}
           >
-            Přidat
+            Nový formulář
           </Button>
 
           <Tabs
@@ -274,13 +275,13 @@ const FormTableComponent: FC = () => {
         </div>
       </div>
 
-      {formTableData && (
+      {formTableData ? (
         <>
           <div className="overflow-x-auto">
             <Table
               aria-label="Example table with dynamic content"
-              onRowAction={(resId) => onRowAction(resId as string)}
               className="min-w-max"
+              onRowAction={(resId) => onRowAction(resId as string)}
             >
               <TableHeader columns={formTableData.table.header}>
                 {(column) => (
@@ -348,6 +349,21 @@ const FormTableComponent: FC = () => {
             </Select>
           </div>
         </>
+      ) : (
+        <div className="w-full mt-20 grid place-content-center">
+          <div className="flex flex-col justify-center items-center">
+            <p className="font-bold text-2xl text-default-700 mb-3">Zatím nemáte žádné formuláře 😬</p>
+            <Button
+              color="primary"
+              endContent={<i className="mdi mdi-plus" />}
+              size="lg"
+              variant="shadow"
+              onClick={() => onOpenForm()}
+            >
+              Vytvořit první formulář
+            </Button>
+          </div>
+        </div>
       )}
     </>
   );

@@ -141,8 +141,8 @@ const Form: FC<{ id: string }> = ({ id }) => {
             as={Link}
             color="primary"
             href={`https://www.brandoo.cz/form/${id}`}
-            target="_blank"
             size="lg"
+            target="_blank"
             variant="flat"
           >
             Náhled
@@ -175,20 +175,32 @@ const Form: FC<{ id: string }> = ({ id }) => {
       </Card>
       <div className="container mx-auto max-w-[768px] py-10 px-3 rounded flex flex-col gap-3">
         <Card className="flex flex-col p-5">
-          <span
+          <h2
             className="capitalize text-2xl font-bold"
             contentEditable={true}
             onBlur={(e) => setName(e.currentTarget.textContent || "")}
           >
             {name}
-          </span>
-          <span
+          </h2>
+          <h3
             className="text-lg text-default-500"
             contentEditable={true}
             onBlur={(e) => setDescription(e.currentTarget.textContent || "")}
           >
             {description}
-          </span>
+          </h3>
+          {formProperties.length === 2 && (
+            <>
+              <span className="text-xs mt-1 text-primary">
+                <i className="mdi mdi-information-outline" />
+                {`"Email" je vysoce doporučený údaj který by měl obsahovat každý formulář, můžete ho ale smazat.`}
+              </span>
+              <span className="text-xs mb-1 mt-1 text-primary">
+                <i className="mdi mdi-information-outline" />
+                {`"Souhlasím s podmínkami zpracování osobních údajů" musí obsahovat každý formulář z důvodu ctění soukromí vašich klientů.`}
+              </span>
+            </>
+          )}
         </Card>
         <div className="flex flex-col gap-3">
           {formProperties.map((property, index) => (
