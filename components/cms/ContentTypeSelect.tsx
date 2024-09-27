@@ -25,12 +25,12 @@ const ContentSelectType: FC<ContentSelectTypeProps> = ({
 
   return (
     <Select
+      color="primary"
       label={selectLabel || "Typ"}
       selectedKeys={selectedType ? new Set([selectedType]) : undefined}
       size={size}
-      onSelectionChange={handleTypeChange}
       variant="faded"
-      color="primary"
+      onSelectionChange={handleTypeChange}
     >
       {CONTENT_TYPES.map(({ label, type, icon }) => (
         <SelectItem
