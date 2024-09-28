@@ -38,6 +38,7 @@ const FormAPIModal: FC<FormAPIModalProps> = ({
     date_time: `"2024-08-29T12:34:56Z"`,
     time: `"12:34:56"`,
     file: "filename.pdf", // TODO:
+    labels: "",
   };
 
   return (
