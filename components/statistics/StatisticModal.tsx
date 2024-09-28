@@ -56,10 +56,6 @@ const StatisticModal: FC<StatisticProps> = ({
 
   const types = [
     {
-      name: "Text",
-      value: "text",
-    },
-    {
       name: "Number",
       value: "number",
     },

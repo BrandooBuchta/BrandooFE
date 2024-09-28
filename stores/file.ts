@@ -13,8 +13,6 @@ const useFileStore = create<FileState>(() => ({
 
     formData.append("file", file);
 
-    console.log(file);
-
     try {
       const response = await axios.post<string>(
         "http://localhost:8000/api/upload-file",

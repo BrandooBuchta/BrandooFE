@@ -7,6 +7,7 @@ import Cookies from "js-cookie";
 import { DndProvider } from "react-dnd";
 import { HTML5Backend } from "react-dnd-html5-backend";
 import Link from "next/link";
+import { useRouter } from "next/router";
 
 import { api } from "@/utils/api";
 import { FormPropertyType, FormWithProperties } from "@/interfaces/form";
@@ -15,6 +16,7 @@ import { convertToKey } from "@/utils/convertors";
 import FormProperty from "@/components/contacts/FormProperty";
 import FormAPIModal from "@/components/contacts/FormAPIModal";
 import AsyncButton from "@/components/UI/AsyncButton";
+import DeletionConfirmation from "@/components/UI/DeletionConfirmation";
 const Form: FC<{ id: string }> = ({ id }) => {
   const { onOpenChange, isOpen, onOpen } = useDisclosure();
   const [formProperties, setFormProperties] = useState<FormPropertyType[]>([]);
@@ -22,6 +24,7 @@ const Form: FC<{ id: string }> = ({ id }) => {
   const [name, setName] = useState<string>("");
   const [isClient, setIsClient] = useState<boolean>(false);
   const [description, setDescription] = useState<string>("");
+  const { back } = useRouter();
 
   const getFormWithProperties = async () => {
     try {
@@ -40,13 +43,14 @@ const Form: FC<{ id: string }> = ({ id }) => {
 
   const saveChanges = async () => {
     try {
-      const properties = formProperties.map((prop) => {
+      const properties = formProperties.map((prop, idx) => {
         if (prop.options && prop.options.length < 1) delete prop.options;
         if (prop.id?.startsWith("subId")) delete prop.id;
 
         return {
           ...prop,
           key: convertToKey(prop.label),
+          position: idx + 1,
         };
       });
 
@@ -68,6 +72,8 @@ const Form: FC<{ id: string }> = ({ id }) => {
       await api.delete(`forms/delete-form/${id}`);
 
       toast.success("Formulář byl úspěšně smazán!");
+
+      back();
     } catch (error) {
       toast.error(`${error}`);
     }
@@ -141,8 +147,8 @@ const Form: FC<{ id: string }> = ({ id }) => {
             as={Link}
             color="primary"
             href={`https://www.brandoo.cz/form/${id}`}
-            target="_blank"
             size="lg"
+            target="_blank"
             variant="flat"
           >
             Náhled
@@ -155,14 +161,14 @@ const Form: FC<{ id: string }> = ({ id }) => {
           >
             Uložit změny
           </AsyncButton>
-          <AsyncButton
-            color="danger"
-            size="lg"
-            variant="shadow"
-            onClick={() => deleteForm()}
-          >
-            Smazat formulář
-          </AsyncButton>
+          <DeletionConfirmation
+            button={
+              <AsyncButton color="danger" size="lg" variant="shadow">
+                Smazat formulář
+              </AsyncButton>
+            }
+            fn={deleteForm}
+          />
           <Button
             color="primary"
             size="lg"
@@ -175,20 +181,32 @@ const Form: FC<{ id: string }> = ({ id }) => {
       </Card>
       <div className="container mx-auto max-w-[768px] py-10 px-3 rounded flex flex-col gap-3">
         <Card className="flex flex-col p-5">
-          <span
+          <h2
             className="capitalize text-2xl font-bold"
             contentEditable={true}
             onBlur={(e) => setName(e.currentTarget.textContent || "")}
           >
             {name}
-          </span>
-          <span
+          </h2>
+          <h3
             className="text-lg text-default-500"
             contentEditable={true}
             onBlur={(e) => setDescription(e.currentTarget.textContent || "")}
           >
             {description}
-          </span>
+          </h3>
+          {formProperties.length === 2 && (
+            <>
+              <span className="text-xs mt-1 text-primary">
+                <i className="mdi mdi-information-outline" />
+                {`"Email" je vysoce doporučený údaj který by měl obsahovat každý formulář, můžete ho ale smazat.`}
+              </span>
+              <span className="text-xs mb-1 mt-1 text-primary">
+                <i className="mdi mdi-information-outline" />
+                {`"Souhlasím s podmínkami zpracování osobních údajů" musí obsahovat každý formulář z důvodu ctění soukromí vašich klientů.`}
+              </span>
+            </>
+          )}
         </Card>
         <div className="flex flex-col gap-3">
           {formProperties.map((property, index) => (
@@ -198,7 +216,6 @@ const Form: FC<{ id: string }> = ({ id }) => {
               index={index}
               moveProperty={moveProperty}
               property={property}
-              refetch={getFormWithProperties}
               setFormProperties={setFormProperties}
               onPropertyChange={(updatedProperty) =>
                 setFormProperties((prev) =>

@@ -1,7 +1,7 @@
 import React, { FC, useState, useRef, useEffect } from "react";
 import { DndProvider } from "react-dnd";
 import { HTML5Backend } from "react-dnd-html5-backend";
-import { cloneDeep, isEqual } from "lodash"; // Přidali jsme isEqual pro porovnávání
+import { cloneDeep, isEqual } from "lodash";
 
 import ItemContentWithNoParentContent from "./ItemContentWithNoParentContent";
 
@@ -19,15 +19,12 @@ const ListItemContent: FC<ContentTypeComponent> = ({
 }) => {
   const contentStore = useContentStore();
 
-  // Uložíme 2D pole, kde každé pole reprezentuje itemContent
   const [items, setItems] = useState<ContentItemProperty[][]>(
     content.listItemContent || [],
   );
 
-  // Ref pro uložení původního pole
   const originalItemsRef = useRef<ContentItemProperty[][]>(cloneDeep(items));
 
-  // Přidat položku
   const addItem = async () => {
     try {
       await contentStore.createListItem(content.id);
@@ -37,24 +34,20 @@ const ListItemContent: FC<ContentTypeComponent> = ({
     }
   };
 
-  // Funkce pro přesun položky
   const moveItem = (dragIndex: number, hoverIndex: number) => {
-    const updatedItems = cloneDeep(items); // Hluboká kopie položek
-    const draggedItem = updatedItems[dragIndex]; // Položka, která se přesouvá
+    const updatedItems = cloneDeep(items);
+    const draggedItem = updatedItems[dragIndex];
 
-    // Přesuneme položku na nové místo
     updatedItems.splice(dragIndex, 1);
     updatedItems.splice(hoverIndex, 0, draggedItem);
 
     setItems(updatedItems);
   };
 
-  // Funkce volaná po dropnutí
   const handleDrop = () => {
     const originalItems = originalItemsRef.current;
     const currentItems = items;
 
-    // Zjistíme, které položky byly prohozeny
     const newOrder: number[] = [];
 
     originalItems.forEach((item, originalIndex) => {
@@ -65,15 +58,12 @@ const ListItemContent: FC<ContentTypeComponent> = ({
       newOrder[originalIndex] = newIndex;
     });
 
-    console.log("newOrder after drop:", newOrder);
 
-    // Odeslat nové pořadí na backend
     contentStore
       .reorderListItem(content.id, newOrder)
-      .then(() => refetch()) // Po úspěšné aktualizaci znovu získat obsah
+      .then(() => refetch())
       .catch((error) => console.error("Error reordering items:", error));
 
-    // Aktualizovat referenci na původní pořadí
     originalItemsRef.current = cloneDeep(items);
   };
 
@@ -86,14 +76,14 @@ const ListItemContent: FC<ContentTypeComponent> = ({
       <div>
         {items.map((e, index) => (
           <ItemContentWithNoParentContent
-            key={e[0] ? e[0].id : `${content.id}-${index}`} // Použití e[0].id jako klíče, aby React správně renderoval komponenty
+            key={e[0] ? e[0].id : `${content.id}-${index}`}
             content={content}
             index={index}
             moveItem={moveItem}
             properties={e}
             refetch={refetch}
             rootId={rootId}
-            onDrop={handleDrop} // Voláme handleDrop při dokončení přesunu
+            onDrop={handleDrop}
           />
         ))}
       </div>

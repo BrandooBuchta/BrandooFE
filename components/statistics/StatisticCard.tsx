@@ -176,7 +176,7 @@ const StatisticCard: FC<StatisticProps> = ({ statistic, refetch }) => {
           color="primary"
           variant="shadow"
         >
-          <i className={`mdi ${statistic.icon} text-2xl`} />
+          <i className={`mdi ${statistic.icon || "mdi-chart-box"} text-2xl`} />
         </Button>
         <div className="flex flex-col">
           <p className="text-md">{statistic.name}</p>

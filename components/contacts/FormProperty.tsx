@@ -23,7 +23,6 @@ interface FormPropertyProps {
   moveProperty: (dragIndex: number, hoverIndex: number) => void;
   formProperties: FormPropertyType[];
   setFormProperties: (properties: FormPropertyType[]) => void;
-  refetch: () => Promise<void>;
 }
 
 const FormProperty: FC<FormPropertyProps> = ({
@@ -33,7 +32,6 @@ const FormProperty: FC<FormPropertyProps> = ({
   moveProperty,
   formProperties,
   setFormProperties,
-  refetch,
 }) => {
   const [selectedType, setSelectedType] = useState<InputType>(
     property.propertyType,
@@ -97,6 +95,7 @@ const FormProperty: FC<FormPropertyProps> = ({
       className="flex flex-col items-center"
     >
       <i className="mdi mdi-drag-horizontal text-2xl h-[20px] cursor-pointer text-default-500" />
+      <p>{property.position}</p>
       <div className="p-3 w-full">
         <div className="flex gap-3 flex-col pb-0">
           <div className="flex w-full gap-2">
@@ -145,17 +144,25 @@ const FormProperty: FC<FormPropertyProps> = ({
       <div className="w-full p-3">
         <Divider />
         <div className="flex justify-end space-x-3 w-full h-full p-3">
-          <Switch isSelected={isRequired} onChange={handleRequiredChange}>
+          <Switch
+            isDisabled={property.key === "privacyPolicy"}
+            isSelected={isRequired}
+            onChange={handleRequiredChange}
+          >
             Povinné
           </Switch>
-          <Divider className="h-[40px] ml-5" orientation="vertical" />
-          <Button
-            isIconOnly
-            color="danger"
-            radius="full"
-            startContent={<i className="mdi mdi-delete text-xl" />}
-            onClick={() => deleteFormProperty(property.id)}
-          />
+          {property.key !== "privacyPolicy" && (
+            <>
+              <Divider className="h-[40px] ml-5" orientation="vertical" />
+              <Button
+                isIconOnly
+                color="danger"
+                radius="full"
+                startContent={<i className="mdi mdi-delete text-xl" />}
+                onClick={() => deleteFormProperty(property.id)}
+              />
+            </>
+          )}
         </div>
       </div>
     </Card>

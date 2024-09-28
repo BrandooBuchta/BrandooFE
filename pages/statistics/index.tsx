@@ -36,8 +36,8 @@ const Statistics: FC = () => {
   };
 
   useEffect(() => {
-    getUsersStatistics();
-  }, []);
+    isClient && getUsersStatistics();
+  }, [isClient]);
 
   useEffect(() => {
     setIsClient(true);
