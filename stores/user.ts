@@ -68,6 +68,7 @@ const useUserStore = create<AuthState>()(
       signOut: () => {
         // Vymažeme auth token z cookies
         Cookies.remove("authToken");
+        Cookies.remove("privateKey");
 
         set({
           isLoggedIn: false,
