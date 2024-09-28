@@ -216,7 +216,6 @@ const Form: FC<{ id: string }> = ({ id }) => {
               index={index}
               moveProperty={moveProperty}
               property={property}
-              refetch={getFormWithProperties}
               setFormProperties={setFormProperties}
               onPropertyChange={(updatedProperty) =>
                 setFormProperties((prev) =>
