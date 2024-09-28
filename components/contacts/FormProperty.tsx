@@ -23,7 +23,6 @@ interface FormPropertyProps {
   moveProperty: (dragIndex: number, hoverIndex: number) => void;
   formProperties: FormPropertyType[];
   setFormProperties: (properties: FormPropertyType[]) => void;
-  refetch: () => Promise<void>;
 }
 
 const FormProperty: FC<FormPropertyProps> = ({
@@ -33,7 +32,6 @@ const FormProperty: FC<FormPropertyProps> = ({
   moveProperty,
   formProperties,
   setFormProperties,
-  refetch,
 }) => {
   const [selectedType, setSelectedType] = useState<InputType>(
     property.propertyType,
@@ -97,6 +95,7 @@ const FormProperty: FC<FormPropertyProps> = ({
       className="flex flex-col items-center"
     >
       <i className="mdi mdi-drag-horizontal text-2xl h-[20px] cursor-pointer text-default-500" />
+      <p>{property.position}</p>
       <div className="p-3 w-full">
         <div className="flex gap-3 flex-col pb-0">
           <div className="flex w-full gap-2">

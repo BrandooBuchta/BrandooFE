@@ -24,6 +24,7 @@ export enum InputType {
   DATETIME = "date_time",
   TIME = "time",
   FILE = "file",
+  LABELS = "labels",
 }
 
 type InputTypeComponentHandler = Record<InputType, React.FC<InputProp>>;
@@ -33,7 +34,7 @@ export const INPUTS: InputTypeComponentHandler = {
   [InputType.CHECKBOX]: CheckboxType,
   [InputType.RADIO]: RadioType,
   [InputType.SELECTION]: SelectionType,
-  // [InputType.STRING_ARRAY]: StringArrayType,
+  [InputType.LABELS]: SelectionType,
   [InputType.LONG_TEXT]: TextLongType,
   [InputType.SHORT_TEXT]: TextShortType,
   [InputType.DATETIME]: DatetimeType,

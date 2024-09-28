@@ -14,12 +14,14 @@ import {
   Tabs,
   Tab,
   Input,
+  Chip,
 } from "@nextui-org/react";
 import { toast } from "react-toastify";
 import NextLink from "next/link";
 import Cookies from "js-cookie";
 import dayjs from "dayjs";
 import debounce from "lodash.debounce";
+import { useTheme } from "next-themes";
 
 import NewFormModal from "../NewFormModal";
 
@@ -42,6 +44,7 @@ const FormTableComponent: FC = () => {
   const [searchQuery, setSearchQuery] = useState<string>("");
   const [sortBy, setSortBy] = useState<string>("created_at");
   const [sortOrder, setSortOrder] = useState<string>("desc");
+  const { theme } = useTheme();
 
   function fileLabel(number: number) {
     switch (number) {
@@ -130,7 +133,7 @@ const FormTableComponent: FC = () => {
   const getLabels = async () => {
     try {
       const { data, status } = await api.get(
-        `contacts/labels/${userStore.user?.id}`,
+        `label/user/${userStore.user?.id}`,
       );
 
       setLabels(status === 404 ? [] : data);
@@ -152,9 +155,35 @@ const FormTableComponent: FC = () => {
       case InputType.CHECKBOX:
         return Array.isArray(value) ? value.join(", ") : value;
       case InputType.DATETIME:
-        return dayjs(value).format("DD. MM. YYYY HH:mm");
+        return dayjs(value).format("DD. MM. YYYY");
       case InputType.FILE:
         return fileLabel((value as string[]).length);
+      case InputType.LABELS:
+        const wordColors = ["primary", "warning", "danger", "success"];
+
+        return labels
+          .filter((label) => value.includes(label.id))
+          .map((label) => (
+            <div key={label.id}>
+              {wordColors.includes(label.color) ? (
+                // @ts-ignore
+                <Chip color={label.color} size="sm" variant="flat">
+                  {label.title}
+                </Chip>
+              ) : (
+                <Chip
+                  classNames={{
+                    base: `bg-${label.color}-${theme === "dark" ? "900" : "300"}`,
+                    content: `text-${label.color}-${theme === "dark" ? "300" : "500"}`,
+                  }}
+                  size="sm"
+                  variant="flat"
+                >
+                  {label.title}
+                </Chip>
+              )}
+            </div>
+          ));
       default:
         return value;
     }
@@ -352,7 +381,9 @@ const FormTableComponent: FC = () => {
       ) : (
         <div className="w-full mt-20 grid place-content-center">
           <div className="flex flex-col justify-center items-center">
-            <p className="font-bold text-2xl text-default-700 mb-3">Zatím nemáte žádné formuláře 😬</p>
+            <p className="font-bold text-2xl text-default-700 mb-3">
+              Zatím nemáte žádné formuláře 😬
+            </p>
             <Button
               color="primary"
               endContent={<i className="mdi mdi-plus" />}
