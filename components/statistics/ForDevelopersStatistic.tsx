@@ -10,6 +10,7 @@ import {
 } from "@nextui-org/react";
 
 import { Statistic } from "@/interfaces/statistics";
+import { baseURL } from "@/utils/api";
 
 interface ForDevelopersStatisticProps {
   onOpenChange: () => void;
@@ -31,7 +32,7 @@ const ForDevelopersStatistic: FC<ForDevelopersStatisticProps> = ({
   return (
     <Modal
       backdrop="opaque"
-      className="lg:w-1/2 w-full transform lg:translate-x-1/2"
+      className="lg:w-4/5 w-full transform lg:translate-x-[12.5%]"
       isOpen={isOpen}
       motionProps={{
         initial: "hidden",
@@ -72,7 +73,7 @@ const ForDevelopersStatistic: FC<ForDevelopersStatisticProps> = ({
               symbol={null}
               variant="bordered"
             >
-              <span>{`/api/statistics/value/${statistic?.id}`}</span>
+              <span>{`${baseURL}statistics/value/${statistic?.id}`}</span>
             </Snippet>
           </div>
           <span className="text-default-400 text-md">Request body</span>
