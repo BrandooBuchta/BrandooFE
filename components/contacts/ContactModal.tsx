@@ -181,8 +181,10 @@ const ContactModal: FC<ContactModalProps> = ({
   const deleteResponse = async () => {
     try {
       await api.delete(`forms/delete-response/${responseId}`);
-      refetch && (await refetch());
-      onOpenChange()
+      if (refetch) {
+        await refetch();
+      }
+      onOpenChange();
     } catch (error) {
       toast.error(`${error}`);
     }
@@ -259,7 +261,6 @@ const ContactModal: FC<ContactModalProps> = ({
                         responseId={responseId}
                       />
                       <DeletionConfirmation
-                        fn={deleteResponse}
                         button={
                           <Button
                             isIconOnly
@@ -272,6 +273,7 @@ const ContactModal: FC<ContactModalProps> = ({
                             variant="shadow"
                           />
                         }
+                        fn={deleteResponse}
                       />
                     </div>
                   </CardHeader>

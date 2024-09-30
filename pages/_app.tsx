@@ -21,6 +21,8 @@ import DefaultLayout from "@/layouts/default";
 import { setAuthTokenHeader } from "@/utils/api";
 
 import Cookies from "js-cookie";
+import { DndProvider } from "react-dnd";
+import { HTML5Backend } from "react-dnd-html5-backend";
 
 // Extend dayjs with utc and timezone plugins
 dayjs.extend(utc);
@@ -56,17 +58,19 @@ export default function App({ Component, pageProps }: AppProps) {
 
   return (
     <NextUIProvider navigate={router.push}>
-      <NextThemesProvider>
-        <DefaultLayout>
-          <div className="relative">
-            <Component {...pageProps} />
-            <div className="fixed bottom-0 right-0 m-7">
-              <ThemeSwitch variant="shadow" />
+      <DndProvider backend={HTML5Backend}>
+        <NextThemesProvider>
+          <DefaultLayout>
+            <div className="relative">
+              <Component {...pageProps} />
+              <div className="fixed bottom-0 right-0 m-7">
+                <ThemeSwitch variant="shadow" />
+              </div>
             </div>
-          </div>
-          <ToastContainer theme="dark" />
-        </DefaultLayout>
-      </NextThemesProvider>
+            <ToastContainer theme="dark" />
+          </DefaultLayout>
+        </NextThemesProvider>
+      </DndProvider>
     </NextUIProvider>
   );
 }
