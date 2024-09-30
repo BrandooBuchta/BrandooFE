@@ -16,6 +16,7 @@ import relativeTime from "dayjs/plugin/relativeTime";
 
 import FilesDisplay from "../utils/FilesDisplay";
 import EventDisplayGrid from "../events/EventDisplayGrid";
+import DeletionConfirmation from "../UI/DeletionConfirmation";
 
 import LabelDropdown from "./LabelDropdown";
 import { InputType } from "./input-types/InputTypes";
@@ -177,6 +178,16 @@ const ContactModal: FC<ContactModalProps> = ({
     }
   };
 
+  const deleteResponse = async () => {
+    try {
+      await api.delete(`forms/delete-response/${responseId}`);
+      refetch && (await refetch());
+      onOpenChange()
+    } catch (error) {
+      toast.error(`${error}`);
+    }
+  };
+
   const formatCellValue = (
     type: InputType,
     value: string | string[] | boolean,
@@ -247,13 +258,20 @@ const ContactModal: FC<ContactModalProps> = ({
                         response={response}
                         responseId={responseId}
                       />
-                      <Button
-                        isIconOnly
-                        color="danger"
-                        radius="full"
-                        size="sm"
-                        startContent={<i className="mdi mdi-delete text-lg" />}
-                        variant="shadow"
+                      <DeletionConfirmation
+                        fn={deleteResponse}
+                        button={
+                          <Button
+                            isIconOnly
+                            color="danger"
+                            radius="full"
+                            size="sm"
+                            startContent={
+                              <i className="mdi mdi-delete text-lg" />
+                            }
+                            variant="shadow"
+                          />
+                        }
                       />
                     </div>
                   </CardHeader>
