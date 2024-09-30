@@ -216,6 +216,7 @@ const FormTableComponent: FC = () => {
       {responseId && (
         <ContactModal
           isOpen={isOpen}
+          refetch={getFormTable}
           responseId={responseId}
           onOpenChange={onOpenChange}
         />

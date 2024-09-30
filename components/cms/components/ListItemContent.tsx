@@ -1,6 +1,4 @@
 import React, { FC, useState, useRef, useEffect } from "react";
-import { DndProvider } from "react-dnd";
-import { HTML5Backend } from "react-dnd-html5-backend";
 import { cloneDeep, isEqual } from "lodash";
 
 import ItemContentWithNoParentContent from "./ItemContentWithNoParentContent";
@@ -58,7 +56,6 @@ const ListItemContent: FC<ContentTypeComponent> = ({
       newOrder[originalIndex] = newIndex;
     });
 
-
     contentStore
       .reorderListItem(content.id, newOrder)
       .then(() => refetch())
@@ -72,7 +69,7 @@ const ListItemContent: FC<ContentTypeComponent> = ({
   }, [content]);
 
   return (
-    <DndProvider backend={HTML5Backend}>
+    <div>
       <div>
         {items.map((e, index) => (
           <ItemContentWithNoParentContent
@@ -97,7 +94,7 @@ const ListItemContent: FC<ContentTypeComponent> = ({
           Přidat položku
         </AsyncButton>
       </div>
-    </DndProvider>
+    </div>
   );
 };
 

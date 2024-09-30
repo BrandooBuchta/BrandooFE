@@ -4,8 +4,6 @@ import { GetServerSideProps } from "next";
 import { Button, Card, Spinner, useDisclosure } from "@nextui-org/react";
 import Head from "next/head";
 import Cookies from "js-cookie";
-import { DndProvider } from "react-dnd";
-import { HTML5Backend } from "react-dnd-html5-backend";
 import Link from "next/link";
 import { useRouter } from "next/router";
 
@@ -134,7 +132,7 @@ const Form: FC<{ id: string }> = ({ id }) => {
   }
 
   return (
-    <DndProvider backend={HTML5Backend}>
+    <div>
       <FormAPIModal form={form} isOpen={isOpen} onOpenChange={onOpenChange} />
       <Head>
         <title>{name}</title>
@@ -235,7 +233,7 @@ const Form: FC<{ id: string }> = ({ id }) => {
           Přidat
         </Button>
       </div>
-    </DndProvider>
+    </div>
   );
 };
 
