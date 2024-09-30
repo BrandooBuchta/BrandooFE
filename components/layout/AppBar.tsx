@@ -52,11 +52,11 @@ export const AppBar: FC<AppBarProps> = ({ toggleSidebar }) => {
       <NavbarContent className="basis-1/5 sm:basis-full" justify="start">
         <NavbarBrand className="gap-3 max-w-fit">
           <NextLink className="flex justify-start items-center gap-1" href="/">
-            {mounted && theme ? (
+            {mounted ? (
               <img
                 alt="logo"
                 className="w-[100px] drop-shadow-[0_0_10px_rgba(255,255,255,0.1)] mr-3"
-                src={`/brandoo-logo-${theme}.svg`}
+                src={`/brandoo-logo-${currentTheme}.svg`}
               />
             ) : (
               <Spinner />
