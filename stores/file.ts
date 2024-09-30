@@ -1,6 +1,7 @@
 import { create } from "zustand";
 import { toast } from "react-toastify";
 import axios from "axios";
+import { baseURL } from "@/utils/api";
 
 interface FileState {
   uploadFile: (file: File) => Promise<string>;
@@ -15,7 +16,7 @@ const useFileStore = create<FileState>(() => ({
 
     try {
       const response = await axios.post<string>(
-        "http://localhost:8000/api/upload-file",
+        `${baseURL}upload-file`,
         formData,
         {
           headers: {
