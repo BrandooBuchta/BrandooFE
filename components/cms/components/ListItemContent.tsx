@@ -21,6 +21,9 @@ const ListItemContent: FC<ContentTypeComponent> = ({
     content.listItemContent || [],
   );
 
+  const [isAllCardsShouldBeClosed, setIsAllCardsShouldBeClosed] =
+    useState<boolean>(false);
+
   const originalItemsRef = useRef<ContentItemProperty[][]>(cloneDeep(items));
 
   const addItem = async () => {
@@ -62,6 +65,7 @@ const ListItemContent: FC<ContentTypeComponent> = ({
       .catch((error) => console.error("Error reordering items:", error));
 
     originalItemsRef.current = cloneDeep(items);
+    setIsAllCardsShouldBeClosed(false);
   };
 
   useEffect(() => {
@@ -76,10 +80,12 @@ const ListItemContent: FC<ContentTypeComponent> = ({
             key={e[0] ? e[0].id : `${content.id}-${index}`}
             content={content}
             index={index}
+            isAllCardsShouldBeClosed={isAllCardsShouldBeClosed}
             moveItem={moveItem}
             properties={e}
             refetch={refetch}
             rootId={rootId}
+            setIsAllCardsShouldBeClosed={setIsAllCardsShouldBeClosed}
             onDrop={handleDrop}
           />
         ))}

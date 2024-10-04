@@ -6,7 +6,6 @@ import clsx from "clsx";
 
 import { SunFilledIcon, MoonFilledIcon } from "@/components/icons";
 import useUserStore from "@/stores/user";
-import { api } from "@/utils/api";
 
 export interface ThemeSwitchProps {
   className?: string;
@@ -48,24 +47,12 @@ export const ThemeSwitch: FC<ThemeSwitchProps> = ({
   // Prevent Hydration Mismatch
   if (!isMounted) return <div className="w-6 h-6" />;
 
-  const sendDarkMode = async () => {
-    try {
-      await api.post(
-        `statistics/push-statistic-value/c7b1d9e9-a727-4fae-8ace-9aad6fdd50db`,
-        {
-          number: 1,
-        },
-      );
-    } catch (error) {}
-  };
-
   return (
     <Button
       isIconOnly
       className="rounded-full"
       color="primary"
       variant={variant}
-      onPress={() => sendDarkMode()}
     >
       <Component
         {...getBaseProps({

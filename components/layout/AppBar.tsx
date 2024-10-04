@@ -41,12 +41,13 @@ export const AppBar: FC<AppBarProps> = ({ toggleSidebar }) => {
 
   return (
     <NextUINavbar
-      className={`${
+      className={`
+      z-50
+      ${
         isDark ? "bg-stone-950 border-b border-gray-700" : "bg-white shadow-md"
       }`}
       isBordered={isDark}
       maxWidth="full"
-      position="sticky"
     >
       <VerificationModal isOpen={isOpen} onOpenChange={onOpenChange} />
       <NavbarContent className="basis-1/5 sm:basis-full" justify="start">

@@ -15,6 +15,12 @@ import {
   Tab,
   Input,
   Chip,
+  Spinner,
+  DropdownItem,
+  DropdownMenu,
+  Dropdown,
+  DropdownTrigger,
+  ScrollShadow,
 } from "@nextui-org/react";
 import { toast } from "react-toastify";
 import NextLink from "next/link";
@@ -42,8 +48,11 @@ const FormTableComponent: FC = () => {
   const [currentPage, setCurrentPage] = useState<number>(1);
   const [labels, setLabels] = useState<Label[]>([]);
   const [searchQuery, setSearchQuery] = useState<string>("");
-  const [sortBy, setSortBy] = useState<string>("created_at");
+  const [sortBy] = useState<string>("created_at");
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+
   const [sortOrder, setSortOrder] = useState<string>("desc");
+
   const { theme } = useTheme();
 
   function fileLabel(number: number) {
@@ -101,6 +110,8 @@ const FormTableComponent: FC = () => {
     sortBy: string = "created_at",
     sortOrder: string = "desc",
   ) => {
+    setFormTableData(null);
+    setIsLoading(true);
     const privateKey = Cookies.get("privateKey");
 
     if (!privateKey) return;
@@ -127,6 +138,8 @@ const FormTableComponent: FC = () => {
       setFormTableData(data);
     } catch (error: any) {
       error.response.status !== 404 && toast.error(`${error}`);
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -193,7 +206,7 @@ const FormTableComponent: FC = () => {
     debounce((formId, query) => {
       getFormTable(currentPage, perPage, query, sortBy, sortOrder);
     }, 500), // 500ms delay
-    [currentPage, perPage, sortBy, sortOrder],
+    [currentPage, perPage, sortBy, sortOrder, currentFormId],
   );
 
   useEffect(() => {
@@ -233,35 +246,72 @@ const FormTableComponent: FC = () => {
             Nový formulář
           </Button>
 
-          <Tabs
-            className="hidden lg:block"
-            color="primary"
-            onSelectionChange={(e) => {
-              setCurrentFormId(e as string);
-            }}
+          <ScrollShadow
+            hideScrollBar
+            className="max-w-[450px]"
+            offset={50}
+            orientation="horizontal"
           >
-            <Tab key="all" title="Všechny" />
-            {forms.map((e) => (
-              <Tab
-                key={e.id}
-                title={
-                  <div className="flex items-center gap-2">
-                    {e.name}
-                    <Button
-                      isIconOnly
-                      as={NextLink}
-                      href={`/form/${e.id}`}
-                      radius="full"
-                      size="sm"
-                      variant="light"
-                    >
-                      <i className="mdi mdi-dots-vertical" />
-                    </Button>
-                  </div>
-                }
-              />
-            ))}
-          </Tabs>
+            <Tabs
+              className="hidden lg:block"
+              color="primary"
+              onSelectionChange={(e) => {
+                setSearchQuery("");
+                setCurrentFormId(e as string);
+              }}
+            >
+              <Tab key="all" title="Všechny" />
+              {forms.map((e) => (
+                <Tab
+                  key={e.id}
+                  title={
+                    <div className="flex items-center gap-2">
+                      {e.name}
+                      <Dropdown>
+                        <DropdownTrigger>
+                          <Button
+                            isIconOnly
+                            radius="full"
+                            size="sm"
+                            variant="light"
+                          >
+                            <i
+                              className={`mdi mdi-dots-vertical ${currentFormId === e.id && "text-white"}`}
+                            />
+                          </Button>
+                        </DropdownTrigger>
+                        <DropdownMenu
+                          aria-label="Dropdown menu with description"
+                          variant="faded"
+                        >
+                          <DropdownItem
+                            key="add"
+                            showDivider
+                            description="Přidání kontaktu přes formulář"
+                            href={`https://www.brandoo.cz/form/${e.id}`}
+                            startContent={<i className="mdi mdi-plus" />}
+                            target="_blank"
+                          >
+                            Přidat
+                          </DropdownItem>
+                          <DropdownItem
+                            key="edit"
+                            as={NextLink}
+                            description="Upravit formulář"
+                            href={`/form/${e.id}`}
+                            startContent={<i className="mdi mdi-pencil" />}
+                            target="_blank"
+                          >
+                            Upravit
+                          </DropdownItem>
+                        </DropdownMenu>
+                      </Dropdown>
+                    </div>
+                  }
+                />
+              ))}
+            </Tabs>
+          </ScrollShadow>
         </div>
         <div className="flex gap-3 items-center w-[40%]">
           <Input
@@ -382,18 +432,24 @@ const FormTableComponent: FC = () => {
       ) : (
         <div className="w-full mt-20 grid place-content-center">
           <div className="flex flex-col justify-center items-center">
-            <p className="font-bold text-2xl text-default-700 mb-3">
-              Zatím nemáte žádné formuláře 😬
-            </p>
-            <Button
-              color="primary"
-              endContent={<i className="mdi mdi-plus" />}
-              size="lg"
-              variant="shadow"
-              onClick={() => onOpenForm()}
-            >
-              Vytvořit první formulář
-            </Button>
+            {isLoading ? (
+              <Spinner size="lg" />
+            ) : (
+              <>
+                <p className="font-bold text-2xl text-default-700 mb-3">
+                  Zatím nemáte žádné formuláře 😬
+                </p>
+                <Button
+                  color="primary"
+                  endContent={<i className="mdi mdi-plus" />}
+                  size="lg"
+                  variant="shadow"
+                  onClick={() => onOpenForm()}
+                >
+                  Vytvořit první formulář
+                </Button>
+              </>
+            )}
           </div>
         </div>
       )}

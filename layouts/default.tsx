@@ -29,7 +29,7 @@ export default function DefaultLayout({
     return <main className="px-4 py-2">{children}</main>;
 
   return (
-    <div className="relative flex flex-col h-screen">
+    <div className="relative flex flex-col min-h-screen">
       <Head />
       <AppBar toggleSidebar={toggleSidebar} />
       <Sidebar

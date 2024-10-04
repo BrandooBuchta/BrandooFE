@@ -7,8 +7,8 @@ import { ContentRootLight, Content } from "@/interfaces/content";
 
 interface ContentState {
   contents: ContentRootLight[];
+  isLoading: boolean;
 
-  fetchRootContentById: (contentId: string) => Promise<Content | undefined>;
   createRootContent: (userId: string) => Promise<void>;
   updateRootContent: (contentId: string, alias?: string) => Promise<void>;
   deleteRootContent: (contentId: string) => Promise<void>;
@@ -39,17 +39,7 @@ interface ContentState {
 
 const useContentStore = create<ContentState>((set) => ({
   contents: [],
-  fetchRootContentById: async (contentId) => {
-    try {
-      const { data } = await api.get<Content>(`contents/root/${contentId}`);
-
-      return data;
-    } catch (error) {
-      toast.error(`Error fetching content: ${error}`);
-
-      return undefined;
-    }
-  },
+  isLoading: false,
 
   createRootContent: async (userId) => {
     try {
@@ -79,6 +69,9 @@ const useContentStore = create<ContentState>((set) => ({
   },
 
   fetchContentsByUserId: async (userId) => {
+    set(() => ({
+      isLoading: true,
+    }));
     try {
       const { data } = await api.get<ContentRootLight[]>(
         `contents/root/users/${userId}`,
@@ -89,6 +82,10 @@ const useContentStore = create<ContentState>((set) => ({
       }));
     } catch (error) {
       toast.error(`Error fetching user contents: ${error}`);
+    } finally {
+      set(() => ({
+        isLoading: false,
+      }));
     }
   },
 

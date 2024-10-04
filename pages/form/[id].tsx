@@ -3,9 +3,9 @@ import { toast } from "react-toastify";
 import { GetServerSideProps } from "next";
 import { Button, Card, Spinner, useDisclosure } from "@nextui-org/react";
 import Head from "next/head";
-import Cookies from "js-cookie";
 import Link from "next/link";
 import { useRouter } from "next/router";
+import NextLink from "next/link";
 
 import { api } from "@/utils/api";
 import { FormPropertyType, FormWithProperties } from "@/interfaces/form";
@@ -15,6 +15,8 @@ import FormProperty from "@/components/contacts/FormProperty";
 import FormAPIModal from "@/components/contacts/FormAPIModal";
 import AsyncButton from "@/components/UI/AsyncButton";
 import DeletionConfirmation from "@/components/UI/DeletionConfirmation";
+import useUserStore from "@/stores/user";
+
 const Form: FC<{ id: string }> = ({ id }) => {
   const { onOpenChange, isOpen, onOpen } = useDisclosure();
   const [formProperties, setFormProperties] = useState<FormPropertyType[]>([]);
@@ -22,6 +24,7 @@ const Form: FC<{ id: string }> = ({ id }) => {
   const [name, setName] = useState<string>("");
   const [isClient, setIsClient] = useState<boolean>(false);
   const [description, setDescription] = useState<string>("");
+  const userStore = useUserStore();
   const { back } = useRouter();
 
   const getFormWithProperties = async () => {
@@ -77,22 +80,6 @@ const Form: FC<{ id: string }> = ({ id }) => {
     }
   };
 
-  const getTestRes = async () => {
-    const privateKey = Cookies.get("privateKey");
-
-    if (!privateKey) return;
-
-    try {
-      await api.get(`forms/form-table/${id}`, {
-        headers: {
-          "X-Private-Key": privateKey,
-        },
-      });
-    } catch (error) {
-      toast.error(`${error}`);
-    }
-  };
-
   const addFormProperty = (key: string) => {
     const newProperty: FormPropertyType = {
       key,
@@ -128,7 +115,11 @@ const Form: FC<{ id: string }> = ({ id }) => {
   }, [isClient]);
 
   if (!form) {
-    return <Spinner />;
+    return (
+      <div className="w-full flex justify-center mt-[250px]">
+        <Spinner size="lg" />
+      </div>
+    );
   }
 
   return (
@@ -139,11 +130,14 @@ const Form: FC<{ id: string }> = ({ id }) => {
         <meta key="title" content={name} property="og:title" />
       </Head>
       <Card className="flex justify-between items-center p-2 gap-3 flex-row">
-        <p className="text-xl font-bold pl-2">Form Studio</p>
+        <p className="text-xl font-bold pl-2">
+          <b className="text-primary">Brandoo</b> FormStudio
+        </p>
         <div className="flex gap-2">
           <Button
             as={Link}
             color="primary"
+            endContent={<i className="mdi mdi-eye-arrow-right text-2xl" />}
             href={`https://www.brandoo.cz/form/${id}`}
             size="lg"
             target="_blank"
@@ -153,6 +147,7 @@ const Form: FC<{ id: string }> = ({ id }) => {
           </Button>
           <AsyncButton
             color="primary"
+            endContent={<i className="mdi mdi-content-save text-2xl" />}
             size="lg"
             variant="shadow"
             onClick={saveChanges}
@@ -161,20 +156,26 @@ const Form: FC<{ id: string }> = ({ id }) => {
           </AsyncButton>
           <DeletionConfirmation
             button={
-              <AsyncButton color="danger" size="lg" variant="shadow">
-                Smazat formulář
-              </AsyncButton>
+              <AsyncButton
+                isIconOnly
+                color="danger"
+                endContent={<i className="mdi mdi-delete text-2xl" />}
+                size="lg"
+                variant="shadow"
+              />
             }
             fn={deleteForm}
           />
-          <Button
-            color="primary"
-            size="lg"
-            variant="flat"
-            onClick={() => onOpen()}
-          >
-            API
-          </Button>
+          {userStore.isDevMode && (
+            <Button
+              isIconOnly
+              color="success"
+              endContent={<i className="mdi mdi-api text-2xl text-white" />}
+              size="lg"
+              variant="solid"
+              onClick={() => onOpen()}
+            />
+          )}
         </div>
       </Card>
       <div className="container mx-auto max-w-[768px] py-10 px-3 rounded flex flex-col gap-3">
@@ -205,6 +206,21 @@ const Form: FC<{ id: string }> = ({ id }) => {
               </span>
             </>
           )}
+          <NextLink
+            aria-label="Podmínky zpracování osobních údajů"
+            className="text-primary font-bold"
+            href={`https://www.brandoo.cz/terms-and-conditions/${id}`}
+            target="_blank"
+          >
+            Podmínky zpracování osobních údajů tohoto formuláře{" "}
+            <i className="mdi mdi-information-outline ml-1 text-primary" />
+            <br />
+          </NextLink>
+          <p className="text-xs text-primary">
+            Prosíme, přiložte tento dokument ke každému formuláři. Pokud tak
+            neučiníte, budete vyzváni k nápravě. V případě, že výzvu nebudete
+            respektovat, váš účet bude smazán do 30 dnů.
+          </p>
         </Card>
         <div className="flex flex-col gap-3">
           {formProperties.map((property, index) => (
