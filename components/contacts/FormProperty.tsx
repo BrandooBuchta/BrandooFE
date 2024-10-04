@@ -113,7 +113,6 @@ const FormProperty: FC<FormPropertyProps> = ({
           />
         )}
       <i className="mdi mdi-drag-horizontal text-2xl h-[20px] cursor-pointer text-default-500" />
-      <p>{property.position}</p>
       <div className="p-3 w-full">
         <div className="flex gap-3 flex-col pb-0">
           <div className="flex w-full gap-2">
