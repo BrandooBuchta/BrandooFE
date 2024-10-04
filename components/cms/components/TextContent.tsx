@@ -24,6 +24,7 @@ const TextContent: FC<ContentTypeComponent> = ({ content }) => {
       <Input
         defaultValue={content.text}
         label="Jednoduchý text"
+        variant="faded"
         // @ts-ignore
         onBlur={(e) => updateTextContent(e.target.value)}
       />

@@ -7,14 +7,22 @@ import {
   Select,
   SelectItem,
   Switch,
+  useDisclosure,
 } from "@nextui-org/react";
 import { useDrag, useDrop } from "react-dnd";
 
 import { INPUTS, InputProp, InputType } from "./input-types/InputTypes";
 import NoSelectedComponent from "./input-types/NoSelctedComponent";
+import PropertyOptionsAPIModal from "./PropertyOptionsAPIModal";
 
 import { PROPERTY_TYPES } from "@/constants/form";
 import { FormPropertyType } from "@/interfaces/form";
+
+const PROPERTIES_TYPES_WITH_OPTIONS: InputType[] = [
+  InputType.SELECTION,
+  InputType.CHECKBOX,
+  InputType.RADIO,
+];
 
 interface FormPropertyProps {
   property: FormPropertyType;
@@ -33,6 +41,8 @@ const FormProperty: FC<FormPropertyProps> = ({
   formProperties,
   setFormProperties,
 }) => {
+  const { onOpenChange, isOpen, onOpen } = useDisclosure();
+
   const [selectedType, setSelectedType] = useState<InputType>(
     property.propertyType,
   );
@@ -94,6 +104,14 @@ const FormProperty: FC<FormPropertyProps> = ({
       ref={(node) => ref(drop(node))}
       className="flex flex-col items-center"
     >
+      {property.id &&
+        PROPERTIES_TYPES_WITH_OPTIONS.includes(property.propertyType) && (
+          <PropertyOptionsAPIModal
+            isOpen={isOpen}
+            propertyId={property.id}
+            onOpenChange={onOpenChange}
+          />
+        )}
       <i className="mdi mdi-drag-horizontal text-2xl h-[20px] cursor-pointer text-default-500" />
       <p>{property.position}</p>
       <div className="p-3 w-full">
@@ -161,6 +179,19 @@ const FormProperty: FC<FormPropertyProps> = ({
                 startContent={<i className="mdi mdi-delete text-xl" />}
                 onClick={() => deleteFormProperty(property.id)}
               />
+              {PROPERTIES_TYPES_WITH_OPTIONS.includes(
+                property.propertyType,
+              ) && (
+                <Button
+                  isIconOnly
+                  color="success"
+                  radius="full"
+                  startContent={
+                    <i className="mdi mdi-api text-xl text-white" />
+                  }
+                  onClick={() => onOpen()}
+                />
+              )}
             </>
           )}
         </div>

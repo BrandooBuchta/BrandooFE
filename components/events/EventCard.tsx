@@ -20,7 +20,7 @@ interface EventCardProps {
 }
 
 const EventCard: FC<EventCardProps> = ({ event }) => {
-  const [isOpen, setIsOpen] = useState(false);
+  const [isOpen, setIsOpen] = useState<boolean>(false);
   const [links, setLinks] = useState(event.links || "");
 
   const titleRef = useRef<HTMLHeadingElement>(null);

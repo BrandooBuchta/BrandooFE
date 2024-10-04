@@ -1,5 +1,5 @@
 import { FC, useEffect, useState } from "react";
-import { Card } from "@nextui-org/react";
+import { Card, Spinner } from "@nextui-org/react";
 
 import RootContentCard from "@/components/cms/RootContentCard";
 import useUserStore from "@/stores/user";
@@ -32,13 +32,22 @@ const CMS: FC = () => {
       contentStore.fetchContentsByUserId(userStore.user?.id);
   }, [isClient]);
 
+  if (contentStore.isLoading) {
+    return (
+      <div className="w-full flex justify-center">
+        <Spinner className="mt-[250px]" size="lg" />
+      </div>
+    );
+  }
+
   return (
     <div className="flex flex-col gap-5">
-      {contentStore.contents.map((e) => (
+      {contentStore.contents.map((e, index) => (
         <Card key={e.id} className="p-3">
           <RootContentCard
             alias={e.alias}
             id={e.id}
+            index={index}
             isRoot={e.isRoot}
             rootId={e.id}
           />
