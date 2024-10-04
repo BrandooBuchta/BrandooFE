@@ -37,6 +37,8 @@ export interface User {
   name: string;
   email: string;
   isVerified: boolean;
+  isActive: boolean;
+  isActiveUntil: string;
   type: string;
   webUrl: string;
   createdAt: string;
