@@ -10,6 +10,8 @@ import {
 } from "@nextui-org/react";
 import JsonToTS from "json-to-ts"; // Importujeme json-to-ts
 
+import ShowAccessTokenForVerification from "../ShowAccessTokenForVerification";
+
 import { api, baseURL } from "@/utils/api";
 
 interface PublicContent {
@@ -20,17 +22,19 @@ interface StatisticProps {
   onOpenChange: () => void;
   isOpen: boolean;
   contentId: string;
+  alias: string;
 }
 
 const ContentAPIModal: FC<StatisticProps> = ({
   isOpen,
   onOpenChange,
   contentId,
+  alias,
 }) => {
   const [contentPreview, setContentPreview] = useState<PublicContent | null>(
     null,
   );
-  const [tsInterface, setTsInterface] = useState<string[]>([]); // Uchováváme rozhraní jako pole řádků
+  const [tsInterface, setTsInterface] = useState<string[]>([]);
 
   const slideInFromRight = {
     hidden: { opacity: 0, x: 100 },
@@ -136,7 +140,7 @@ const ContentAPIModal: FC<StatisticProps> = ({
     >
       <ModalContent>
         <ModalHeader>
-          <span className="text-default-800 font-bold text-xl">Alias</span>
+          <span className="text-default-800 font-bold text-xl">{alias}</span>
         </ModalHeader>
         <ModalBody>
           <span className="text-default-600 font-semibold text-lg">
@@ -181,6 +185,7 @@ const ContentAPIModal: FC<StatisticProps> = ({
               </div>
             ))}
           </Code>
+          <ShowAccessTokenForVerification />
         </ModalBody>
       </ModalContent>
     </Modal>

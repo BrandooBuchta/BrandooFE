@@ -44,16 +44,18 @@ const Form: FC<{ id: string }> = ({ id }) => {
 
   const saveChanges = async () => {
     try {
-      const properties = formProperties.map((prop, idx) => {
-        if (prop.options && prop.options.length < 1) delete prop.options;
-        if (prop.id?.startsWith("subId")) delete prop.id;
+      const properties = formProperties.map(
+        (prop: Omit<FormPropertyType, "id"> & { id?: string }, idx) => {
+          if (prop.options && prop.options.length < 1) delete prop.options;
+          if (prop.id?.startsWith("subId")) delete prop.id;
 
-        return {
-          ...prop,
-          key: convertToKey(prop.label),
-          position: idx + 1,
-        };
-      });
+          return {
+            ...prop,
+            key: convertToKey(prop.label),
+            position: idx + 1,
+          };
+        },
+      );
 
       await api.put(`forms/update-form/${id}`, {
         name,

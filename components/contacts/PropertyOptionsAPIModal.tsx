@@ -11,6 +11,7 @@ import {
 import { toast } from "react-toastify";
 
 import { api, baseURL } from "@/utils/api";
+import ShowAccessTokenForVerification from "../ShowAccessTokenForVerification";
 
 interface OptionsResponse {
   propertyName: string;
@@ -133,6 +134,7 @@ const PropertyOptionsAPIModal: FC<PropertyOptionsAPIModalProps> = ({
             </div>
             {`}`}
           </Code>
+          <ShowAccessTokenForVerification />
         </ModalBody>
       </ModalContent>
     </Modal>
