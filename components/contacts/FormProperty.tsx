@@ -120,12 +120,14 @@ const FormProperty: FC<FormPropertyProps> = ({
             <Input
               defaultValue={property.label}
               label="Label"
+              className="w-[70%]"
               variant="underlined"
               onChange={({ target: { value } }) => handleLabelChange(value)}
             />
             <Select
               defaultSelectedKeys={[selectedType]}
               label="Typ"
+              className="w-[30%]"
               startContent={
                 <i
                   className={`mdi mdi-${PROPERTY_TYPES.find((e) => e.key === selectedType)?.icon}`}
