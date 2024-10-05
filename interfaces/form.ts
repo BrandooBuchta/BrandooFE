@@ -1,7 +1,7 @@
 import { InputType } from "@/components/contacts/input-types/InputTypes";
 
 export interface FormPropertyType {
-  id?: string;
+  id: string;
   formId?: string;
   userId?: string;
   propertyType: InputType;

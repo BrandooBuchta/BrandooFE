@@ -21,7 +21,7 @@ interface RootContentCardProps {
   alias?: string;
   isRoot: boolean;
   rootId: string;
-  index: number
+  index: number;
 }
 
 const RootContentCard: FC<RootContentCardProps> = ({
@@ -161,11 +161,14 @@ const RootContentCard: FC<RootContentCardProps> = ({
           </motion.div>
         )}
       </AnimatePresence>
-      <ContentAPIModal
-        contentId={id}
-        isOpen={isOpen}
-        onOpenChange={onOpenChange}
-      />
+      {alias && (
+        <ContentAPIModal
+          alias={alias}
+          contentId={id}
+          isOpen={isOpen}
+          onOpenChange={onOpenChange}
+        />
+      )}
     </div>
   );
 };

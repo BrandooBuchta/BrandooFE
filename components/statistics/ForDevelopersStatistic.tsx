@@ -9,6 +9,8 @@ import {
   Snippet,
 } from "@nextui-org/react";
 
+import ShowAccessTokenForVerification from "../ShowAccessTokenForVerification";
+
 import { Statistic } from "@/interfaces/statistics";
 import { baseURL } from "@/utils/api";
 
@@ -92,6 +94,7 @@ const ForDevelopersStatistic: FC<ForDevelopersStatisticProps> = ({
             </div>
             {`}`}
           </Code>
+          <ShowAccessTokenForVerification />
         </ModalBody>
       </ModalContent>
     </Modal>

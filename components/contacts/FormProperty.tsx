@@ -105,6 +105,7 @@ const FormProperty: FC<FormPropertyProps> = ({
       className="flex flex-col items-center"
     >
       {property.id &&
+        !property.id.startsWith("subId") &&
         PROPERTIES_TYPES_WITH_OPTIONS.includes(property.propertyType) && (
           <PropertyOptionsAPIModal
             isOpen={isOpen}
@@ -113,7 +114,6 @@ const FormProperty: FC<FormPropertyProps> = ({
           />
         )}
       <i className="mdi mdi-drag-horizontal text-2xl h-[20px] cursor-pointer text-default-500" />
-      <p>{property.position}</p>
       <div className="p-3 w-full">
         <div className="flex gap-3 flex-col pb-0">
           <div className="flex w-full gap-2">
@@ -179,19 +179,18 @@ const FormProperty: FC<FormPropertyProps> = ({
                 startContent={<i className="mdi mdi-delete text-xl" />}
                 onClick={() => deleteFormProperty(property.id)}
               />
-              {PROPERTIES_TYPES_WITH_OPTIONS.includes(
-                property.propertyType,
-              ) && (
-                <Button
-                  isIconOnly
-                  color="success"
-                  radius="full"
-                  startContent={
-                    <i className="mdi mdi-api text-xl text-white" />
-                  }
-                  onClick={() => onOpen()}
-                />
-              )}
+              {PROPERTIES_TYPES_WITH_OPTIONS.includes(property.propertyType) &&
+                !property.id.startsWith("subId") && (
+                  <Button
+                    isIconOnly
+                    color="success"
+                    radius="full"
+                    startContent={
+                      <i className="mdi mdi-api text-xl text-white" />
+                    }
+                    onClick={() => onOpen()}
+                  />
+                )}
             </>
           )}
         </div>

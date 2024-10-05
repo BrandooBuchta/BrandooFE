@@ -11,6 +11,7 @@ import {
 
 import { FormWithProperties } from "@/interfaces/form";
 import { baseURL } from "@/utils/api";
+import ShowAccessTokenForVerification from "../ShowAccessTokenForVerification";
 
 interface FormAPIModalProps {
   onOpenChange: () => void;
@@ -104,6 +105,7 @@ const FormAPIModal: FC<FormAPIModalProps> = ({
             </div>
             {`}`}
           </Code>
+          <ShowAccessTokenForVerification />
         </ModalBody>
       </ModalContent>
     </Modal>

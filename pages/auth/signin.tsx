@@ -1,23 +1,22 @@
 import { FC } from "react";
-import { useForm, SubmitHandler } from "react-hook-form";
-import { Button, Card, Input } from "@nextui-org/react";
+import { useForm } from "react-hook-form";
+import { Card, Input } from "@nextui-org/react";
 import NextLink from "next/link";
 
 import useUserStore from "@/stores/user";
 import { SignInRequest } from "@/interfaces/user";
+import AsyncButton from "@/components/UI/AsyncButton";
 
 const SignIn: FC = () => {
   const {
     register,
-    handleSubmit,
+    getValues,
     formState: { errors },
   } = useForm<SignInRequest>();
 
   const { signIn } = useUserStore();
 
-  const onSubmit: SubmitHandler<SignInRequest> = async (data) => {
-    signIn(data);
-  };
+  const onSubmit = async () => signIn(getValues());
 
   return (
     <div className="relative h-screen">
@@ -25,7 +24,7 @@ const SignIn: FC = () => {
         <div className="flex-1 flex justify-center items-center">
           <Card className="p-5 w-80 h-fit gap-5">
             <h2 className="font-bold text-2xl text-center">Přihlášení</h2>
-            <form onSubmit={handleSubmit(onSubmit)}>
+            <form>
               <div className="mb-4">
                 <Input
                   color="primary"
@@ -49,15 +48,15 @@ const SignIn: FC = () => {
                 />
               </div>
               <div>
-                <Button
+                <AsyncButton
                   className="w-full"
                   color="primary"
                   size="lg"
-                  type="submit"
                   variant="shadow"
+                  onClick={() => onSubmit()}
                 >
                   Přihlásit se
-                </Button>
+                </AsyncButton>
                 <NextLink href="/auth/reset-password">
                   <h6
                     className="mt-4 text-xs text-right"
