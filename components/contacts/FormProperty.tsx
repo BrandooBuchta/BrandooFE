@@ -116,7 +116,7 @@ const FormProperty: FC<FormPropertyProps> = ({
       <i className="mdi mdi-drag-horizontal text-2xl h-[20px] cursor-pointer text-default-500" />
       <div className="p-3 w-full">
         <div className="flex gap-3 flex-col pb-0">
-          <div className="flex w-full gap-2">
+          <div className="flex w-[70%] gap-2">
             <Input
               defaultValue={property.label}
               label="Label"
@@ -126,6 +126,7 @@ const FormProperty: FC<FormPropertyProps> = ({
             <Select
               defaultSelectedKeys={[selectedType]}
               label="Typ"
+              className="w-[30%]"
               startContent={
                 <i
                   className={`mdi mdi-${PROPERTY_TYPES.find((e) => e.key === selectedType)?.icon}`}
