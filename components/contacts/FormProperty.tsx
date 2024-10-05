@@ -116,10 +116,11 @@ const FormProperty: FC<FormPropertyProps> = ({
       <i className="mdi mdi-drag-horizontal text-2xl h-[20px] cursor-pointer text-default-500" />
       <div className="p-3 w-full">
         <div className="flex gap-3 flex-col pb-0">
-          <div className="flex w-[70%] gap-2">
+          <div className="flex w-full gap-2">
             <Input
               defaultValue={property.label}
               label="Label"
+              className="w-[70%]"
               variant="underlined"
               onChange={({ target: { value } }) => handleLabelChange(value)}
             />
