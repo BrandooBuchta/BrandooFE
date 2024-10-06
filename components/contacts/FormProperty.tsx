@@ -118,16 +118,16 @@ const FormProperty: FC<FormPropertyProps> = ({
         <div className="flex gap-3 flex-col pb-0">
           <div className="flex w-full gap-2">
             <Input
+              className="w-[70%]"
               defaultValue={property.label}
               label="Label"
-              className="w-[70%]"
               variant="underlined"
               onChange={({ target: { value } }) => handleLabelChange(value)}
             />
             <Select
+              className="w-[30%]"
               defaultSelectedKeys={[selectedType]}
               label="Typ"
-              className="w-[30%]"
               startContent={
                 <i
                   className={`mdi mdi-${PROPERTY_TYPES.find((e) => e.key === selectedType)?.icon}`}
