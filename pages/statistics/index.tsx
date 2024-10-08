@@ -89,7 +89,7 @@ const Statistics: FC = () => {
   }
 
   return (
-    <div className="flex flex-col m-3 w-full">
+    <div className="flex flex-col mt-2 w-full">
       <div className="flex gap-2">
         <Button
           color="primary"
@@ -128,12 +128,12 @@ const Statistics: FC = () => {
           </Select>
         </div>
       </div>
-      <div className="flex gap-5 flex-wrap">
-        <StatisticModal
-          isOpen={isOpen}
-          refetch={getUsersStatistics}
-          onOpenChange={onOpenChange}
-        />
+      <StatisticModal
+        isOpen={isOpen}
+        refetch={getUsersStatistics}
+        onOpenChange={onOpenChange}
+      />
+      <div className="grid gap-5 grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 3xl:grid-cols-5">
         {filteredStatistics.map((s) => (
           <StatisticCard
             key={s.id}

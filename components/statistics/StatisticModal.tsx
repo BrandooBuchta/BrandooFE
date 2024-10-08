@@ -60,7 +60,7 @@ const StatisticModal: FC<StatisticProps> = ({
       value: "number",
     },
     {
-      name: "Boolean",
+      name: "Poměr | Ano/Ne'",
       value: "boolean",
     },
     {

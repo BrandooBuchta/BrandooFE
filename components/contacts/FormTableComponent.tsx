@@ -44,7 +44,7 @@ const FormTableComponent: FC = () => {
   const [forms, setForms] = useState<{ name: string; id: string }[]>([]);
   const [currentFormId, setCurrentFormId] = useState<string>("all");
   const [responseId, setResponseId] = useState<string | null>(null);
-  const [perPage, setPerPage] = useState<number>(10);
+  const [perPage, setPerPage] = useState<number>(5);
   const [currentPage, setCurrentPage] = useState<number>(1);
   const [labels, setLabels] = useState<Label[]>([]);
   const [searchQuery, setSearchQuery] = useState<string>("");
@@ -105,7 +105,7 @@ const FormTableComponent: FC = () => {
 
   const getFormTable = async (
     page: number = 1,
-    perPage: number = 10,
+    perPage: number = 5,
     query: string = "",
     sortBy: string = "created_at",
     sortOrder: string = "desc",

@@ -146,7 +146,7 @@ const StatisticCard: FC<StatisticProps> = ({ statistic, refetch }) => {
 
   return (
     <Card
-      className={`w-[300px] p-1 cursor-pointer ${
+      className={`w-full p-1 cursor-pointer ${
         isDark
           ? "bg-stone-950 border border-gray-700 shadow-none"
           : "bg-white shadow-xl"
