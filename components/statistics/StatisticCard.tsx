@@ -1,4 +1,4 @@
-import React, { FC } from "react";
+import React, { FC, useState } from "react";
 import {
   Card,
   CardHeader,
@@ -12,6 +12,7 @@ import {
   DropdownMenu,
   DropdownSection,
   DropdownItem,
+  Switch,
 } from "@nextui-org/react";
 import { toast } from "react-toastify";
 import { useTheme } from "next-themes";
@@ -27,6 +28,8 @@ import TimeStatisticDetailModal from "./TimeStatisticDetailModal";
 import { Statistic, StatisticType } from "@/interfaces/statistics";
 import useUserStore from "@/stores/user";
 import { api } from "@/utils/api";
+
+const ratioKeywords = ["poměr", "Poměr", "poměru", "Poměru", "Ratio", "ratio"];
 
 interface StatisticProps {
   statistic: Statistic;
@@ -51,6 +54,10 @@ const StatisticCard: FC<StatisticProps> = ({ statistic, refetch }) => {
   const { theme, systemTheme } = useTheme();
   const currentTheme = theme === "system" ? systemTheme : theme;
   const isDark = currentTheme === "dark";
+  const [isPercentage, setIsPercentage] = useState<boolean>(
+    ratioKeywords.some((e) => statistic.name.includes(e)) ||
+      ratioKeywords.some((e) => statistic.description.includes(e)),
+  );
 
   const deleteStatistic = async () => {
     try {
@@ -121,8 +128,16 @@ const StatisticCard: FC<StatisticProps> = ({ statistic, refetch }) => {
         return (
           <div className="flex gap-1 items-center">
             <p className="text-default-500 font-bold text-xl flex gap-1">
-              <span className="text-primary">{trueVals}</span>|
-              <span className="text-danger">{falseVals}</span>
+              {isPercentage ? (
+                <>
+                  <span>{((falseVals / trueVals) * 100).toFixed(2)} %</span>
+                </>
+              ) : (
+                <>
+                  <span className="text-primary">{trueVals}</span>|
+                  <span className="text-danger">{falseVals}</span>
+                </>
+              )}
             </p>
           </div>
         );
@@ -180,7 +195,24 @@ const StatisticCard: FC<StatisticProps> = ({ statistic, refetch }) => {
         </Button>
         <div className="flex flex-col">
           <p className="text-md">{statistic.name}</p>
-          {value(statistic.type)}
+          <div className="flex gap-2 items-center">
+            {statistic.type === "boolean" && (
+              <Switch
+                color="primary"
+                isSelected={isPercentage}
+                size="sm"
+                thumbIcon={({ isSelected, className }) =>
+                  isSelected ? (
+                    <i className={`${className} mdi mdi-slash-forward`} />
+                  ) : (
+                    <i className={`${className} mdi mdi-percent`} />
+                  )
+                }
+                onClick={() => setIsPercentage((e) => !e)}
+              />
+            )}
+            {value(statistic.type)}
+          </div>
         </div>
       </CardHeader>
       <CardBody>
