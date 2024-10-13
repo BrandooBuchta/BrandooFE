@@ -32,7 +32,7 @@ const VerificationModal: FC<VerificationModalProps> = ({
 
   const finish = async (code: string) => {
     if (code.length !== 6) return;
-    user.user && (await finishVerification({ code }, user.user.id));
+    user.user && (await finishVerification(code, user.user.id));
   };
 
   return (

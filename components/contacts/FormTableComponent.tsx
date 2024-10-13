@@ -396,9 +396,7 @@ const FormTableComponent: FC = () => {
               showControls
               initialPage={1}
               page={currentPage}
-              total={Math.ceil(
-                (formTableData?.pagination.totalItems || 0) / perPage,
-              )}
+              total={formTableData?.pagination.totalItems}
               onChange={(page) => {
                 setCurrentPage(page);
                 getFormTable(page, perPage, searchQuery, sortBy, sortOrder);

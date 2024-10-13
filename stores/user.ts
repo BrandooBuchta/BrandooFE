@@ -28,7 +28,7 @@ interface AuthState {
   resetPassword: (body: { email: string }) => Promise<void>;
   resetPasswordFinish: (body: ResetPasswordFinishBody) => Promise<void>;
   startVerification: (id: string) => Promise<void>;
-  finishVerification: (body: { code: string }, id: string) => Promise<void>;
+  finishVerification: (code: string, id: string) => Promise<void>;
   setUserFormInfo: (info: UserFormInfo) => void;
 }
 
@@ -113,11 +113,10 @@ const useUserStore = create<AuthState>()(
           toast.error(`${error}`);
         }
       },
-      finishVerification: async (body, id) => {
+      finishVerification: async (code, id) => {
         try {
           const { status } = await api.post(
-            `user/finish-verification/${id}`,
-            body,
+            `user/finish-verification/${id}?code=${code}`,
           );
 
           if (status === 404) {
