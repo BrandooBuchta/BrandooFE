@@ -3,20 +3,16 @@ import { Button, Input } from "@nextui-org/react";
 
 import { ContentTypeComponent } from "@/interfaces/content";
 import useContentStore from "@/stores/cms";
-import useUserStore from "@/stores/user";
 import AsyncButton from "@/components/UI/AsyncButton";
 
 const ListTextContent: FC<ContentTypeComponent> = ({ content }) => {
   const [currentEditedIdx, setCurrentEditedIdx] = useState<number | null>(null);
   const inputRefs = useRef<(HTMLInputElement | null)[]>([]);
   const contentStore = useContentStore();
-  const userStore = useUserStore();
 
   const updateTextContent = async () => {
     try {
       await contentStore.updateContent(content.id, { listTextContent: texts });
-      userStore.user?.id &&
-        (await contentStore.fetchContentsByUserId(userStore.user.id));
     } catch (error) {
       console.error(error);
     }

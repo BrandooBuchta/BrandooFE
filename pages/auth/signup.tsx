@@ -176,14 +176,14 @@ const SignUp: FC = () => {
       title: "Heslo",
       subTitle: (
         <div className="gap-2 flex flex-col">
-          <Chip color="warning" variant="flat">
-            Pozor!
-          </Chip>
-          <p className="text-sm">
-            Heslo které zde zadáte bude sloužit i jako klíč k vašim kontaktům,
-            jeho zapomenutím a následným resetem neztratíte přístup k CMS a
-            Statistikám, ale pouze k datům z vašich formulářů.
-          </p>
+          <div className="bg-danger-100 text-danger-500 rounded-lg p-3">
+            <b>Pozor!</b>
+            <p className="text-sm">
+              Heslo které zde zadáte bude sloužit i jako klíč k vašim kontaktům,
+              jeho zapomenutím a následným resetem neztratíte přístup k CMS a
+              Statistikám, ale pouze k datům z vašich formulářů.
+            </p>
+          </div>
           <span className="text-xs text-primary">
             <i className="mdi mdi-information-outline mr-1" />
             {`Podrobnější informace`}

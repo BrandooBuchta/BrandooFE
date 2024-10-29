@@ -3,17 +3,13 @@ import { Input } from "@nextui-org/react";
 
 import { ContentTypeComponent } from "@/interfaces/content";
 import useContentStore from "@/stores/cms";
-import useUserStore from "@/stores/user";
 
 const TextContent: FC<ContentTypeComponent> = ({ content }) => {
   const contentStore = useContentStore();
-  const userStore = useUserStore();
 
   const updateTextContent = async (text: string) => {
     try {
       await contentStore.updateContent(content.id, { text });
-      userStore.user?.id &&
-        (await contentStore.fetchContentsByUserId(userStore.user.id));
     } catch (error) {
       console.error(error);
     }
