@@ -21,6 +21,11 @@ import {
   Dropdown,
   DropdownTrigger,
   ScrollShadow,
+  Modal,
+  ModalHeader,
+  ModalBody,
+  ModalFooter,
+  ModalContent,
 } from "@nextui-org/react";
 import { toast } from "react-toastify";
 import NextLink from "next/link";
@@ -50,10 +55,41 @@ const FormTableComponent: FC = () => {
   const [searchQuery, setSearchQuery] = useState<string>("");
   const [sortBy] = useState<string>("created_at");
   const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [formToDeleteId, setFormToDeleteId] = useState<string | null>(null);
+  const [isDeletingWholeForm, setIsDeletingWholeForm] =
+    useState<boolean>(false);
+
+  const {
+    onOpenChange: onOpenChangeDeletion,
+    isOpen: isOpenDeletion,
+    onOpen: onOpenDeletion,
+  } = useDisclosure();
 
   const [sortOrder, setSortOrder] = useState<string>("desc");
 
   const { theme } = useTheme();
+
+  const deleteForm = async (id: string) => {
+    try {
+      await api.delete(`forms/delete-form/${id}`);
+      await getUsersForms();
+
+      toast.success("Formulář byl úspěšně smazán!");
+    } catch (error) {
+      toast.error(`${error}`);
+    }
+  };
+
+  const resetForm = async (id: string) => {
+    try {
+      await api.delete(`forms/reset-form/${id}`);
+      await getFormTable();
+
+      toast.success("Formulář byl úspěšně resetován!");
+    } catch (error) {
+      toast.error(`${error}`);
+    }
+  };
 
   function fileLabel(number: number) {
     switch (number) {
@@ -225,6 +261,39 @@ const FormTableComponent: FC = () => {
 
   return (
     <>
+      {formToDeleteId && (
+        <Modal isOpen={isOpenDeletion} onOpenChange={onOpenChangeDeletion}>
+          <ModalContent>
+            <ModalHeader>Potvrďte smazání</ModalHeader>
+            <ModalBody>
+              <p className="text-lg">
+                Tato akce je nevratná, potvrďte jí prosím.
+              </p>
+            </ModalBody>
+            <ModalFooter>
+              <Button
+                color="danger"
+                variant="flat"
+                onClick={() => onOpenChangeDeletion()}
+              >
+                Zrušit
+              </Button>
+              <Button
+                color="danger"
+                variant="shadow"
+                onClick={() => {
+                  isDeletingWholeForm
+                    ? deleteForm(formToDeleteId)
+                    : resetForm(formToDeleteId);
+                  onOpenChangeDeletion();
+                }}
+              >
+                Smazat
+              </Button>
+            </ModalFooter>
+          </ModalContent>
+        </Modal>
+      )}
       <NewFormModal isOpen={isOpenForm} onOpenChange={onOpenChangeForm} />
       {responseId && (
         <ContactModal
@@ -296,6 +365,7 @@ const FormTableComponent: FC = () => {
                           </DropdownItem>
                           <DropdownItem
                             key="edit"
+                            showDivider
                             as={NextLink}
                             description="Upravit formulář"
                             href={`/form/${e.id}`}
@@ -303,6 +373,35 @@ const FormTableComponent: FC = () => {
                             target="_blank"
                           >
                             Upravit
+                          </DropdownItem>
+                          <DropdownItem
+                            key="delete"
+                            showDivider
+                            className="text-danger"
+                            color="danger"
+                            description="Smazání formuláře"
+                            startContent={<i className="mdi mdi-delete" />}
+                            onClick={() => {
+                              setFormToDeleteId(e.id);
+                              setIsDeletingWholeForm(true);
+                              onOpenDeletion();
+                            }}
+                          >
+                            Smazat
+                          </DropdownItem>
+                          <DropdownItem
+                            key="delete"
+                            className="text-danger"
+                            color="danger"
+                            description="Tato akce smaže všechny odpovědi"
+                            startContent={<i className="mdi mdi-delete" />}
+                            onClick={() => {
+                              setFormToDeleteId(e.id);
+                              setIsDeletingWholeForm(false);
+                              onOpenDeletion();
+                            }}
+                          >
+                            Resetovat
                           </DropdownItem>
                         </DropdownMenu>
                       </Dropdown>
@@ -361,6 +460,7 @@ const FormTableComponent: FC = () => {
             <Table
               aria-label="Example table with dynamic content"
               className="min-w-max"
+              selectionMode="multiple"
               onRowAction={(resId) => onRowAction(resId as string)}
             >
               <TableHeader columns={formTableData.table.header}>

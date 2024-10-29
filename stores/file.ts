@@ -35,7 +35,7 @@ const useFileStore = create<FileState>(() => ({
   deleteFile: async (fileName) => {
     try {
       const response = await axios.delete<string>(
-        `http://localhost:8000/api/delete-file/${fileName}`,
+        `${baseURL}delete-file/${fileName}`,
       );
 
       return response.data;

@@ -4,6 +4,7 @@ import {
   ButtonGroup,
   Select,
   SelectItem,
+  Spinner,
   useDisclosure,
 } from "@nextui-org/react";
 import { toast } from "react-toastify";
@@ -16,7 +17,8 @@ import { Statistic } from "@/interfaces/statistics";
 import StatisticModal from "@/components/statistics/StatisticModal";
 
 const Statistics: FC = () => {
-  const [isClient, setIsClient] = useState(false);
+  const [isClient, setIsClient] = useState<boolean>(false);
+  const [isLoading, setIsLoading] = useState<boolean>(true);
   const [statistics, setStatistics] = useState<Statistic[]>([]);
   const [filteredStatistics, setFilteredStatistics] = useState<Statistic[]>([]);
   const [currentInterval, setCurrentInterval] = useState<string>("last-week");
@@ -30,6 +32,7 @@ const Statistics: FC = () => {
       );
 
       setStatistics(usersStatistics);
+      setIsLoading(false);
     } catch (error) {
       toast.error(`${error}`);
     }
@@ -86,6 +89,14 @@ const Statistics: FC = () => {
 
   if (!isClient) {
     return null; // or a loading spinner
+  }
+
+  if (isLoading) {
+    return (
+      <div className="w-full flex justify-center">
+        <Spinner className="mt-[250px]" size="lg" />
+      </div>
+    );
   }
 
   return (
