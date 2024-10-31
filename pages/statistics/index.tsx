@@ -1,7 +1,8 @@
-import { FC, useEffect, useState, ChangeEvent } from "react";
+import { FC, useEffect, useState, ChangeEvent, useCallback } from "react";
 import {
   Button,
   ButtonGroup,
+  Input,
   Select,
   SelectItem,
   Spinner,
@@ -9,6 +10,7 @@ import {
 } from "@nextui-org/react";
 import { toast } from "react-toastify";
 import dayjs from "dayjs";
+import debounce from "lodash.debounce";
 
 import StatisticCard from "@/components/statistics/StatisticCard";
 import { api } from "@/utils/api";
@@ -20,6 +22,8 @@ const Statistics: FC = () => {
   const [isClient, setIsClient] = useState<boolean>(false);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [statistics, setStatistics] = useState<Statistic[]>([]);
+  const [searchQuery, setSearchQuery] = useState<string>("");
+
   const [filteredStatistics, setFilteredStatistics] = useState<Statistic[]>([]);
   const [currentInterval, setCurrentInterval] = useState<string>("last-week");
   const userStore = useUserStore();
@@ -28,7 +32,7 @@ const Statistics: FC = () => {
   const getUsersStatistics = async () => {
     try {
       const { data: usersStatistics } = await api.get<Statistic[]>(
-        `statistics/get-users-statistics/${userStore.user?.id}`,
+        `statistics/get-users-statistics/${userStore.user?.id}?searchQuery=${searchQuery}`,
       );
 
       setStatistics(usersStatistics);
@@ -87,6 +91,15 @@ const Statistics: FC = () => {
     setCurrentInterval(event.target.value);
   };
 
+  // Debounced function for updating the search query
+  const debouncedSearch = useCallback(
+    debounce((query: string) => {
+      setSearchQuery(query);
+      getUsersStatistics();
+    }, 500),
+    [],
+  );
+
   if (!isClient) {
     return null; // or a loading spinner
   }
@@ -143,6 +156,14 @@ const Statistics: FC = () => {
         isOpen={isOpen}
         refetch={getUsersStatistics}
         onOpenChange={onOpenChange}
+      />
+      <Input
+        className="mb-5"
+        endContent={<i className="mdi mdi-magnify" />}
+        placeholder="Hledat"
+        onChange={({ target: { value } }) => {
+          debouncedSearch(value);
+        }}
       />
       <div className="grid gap-5 grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 3xl:grid-cols-5">
         {filteredStatistics.map((s) => (
