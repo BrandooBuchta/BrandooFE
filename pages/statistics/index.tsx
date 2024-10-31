@@ -29,10 +29,10 @@ const Statistics: FC = () => {
   const userStore = useUserStore();
   const { onOpenChange, isOpen, onOpen } = useDisclosure();
 
-  const getUsersStatistics = async () => {
+  const getUsersStatistics = async (query = "") => {
     try {
       const { data: usersStatistics } = await api.get<Statistic[]>(
-        `statistics/get-users-statistics/${userStore.user?.id}?searchQuery=${searchQuery}`,
+        `statistics/get-users-statistics/${userStore.user?.id}?searchQuery=${query}`,
       );
 
       setStatistics(usersStatistics);
@@ -42,8 +42,21 @@ const Statistics: FC = () => {
     }
   };
 
+  const resetAllStatistics = async () => {
+    try {
+      await api.delete<Statistic[]>(
+        `statistics/reset-user-statistics/${userStore.user?.id}`,
+      );
+
+      await getUsersStatistics(searchQuery); // Pass the current search query
+      setIsLoading(false);
+    } catch (error) {
+      toast.error(`${error}`);
+    }
+  };
+
   useEffect(() => {
-    isClient && getUsersStatistics();
+    if (isClient) getUsersStatistics();
   }, [isClient]);
 
   useEffect(() => {
@@ -74,9 +87,6 @@ const Statistics: FC = () => {
       }),
     }));
 
-    // Filter out statistics with no values after filtering
-    // filteredValues = filteredValues.filter((stat) => stat.values.length > 0);
-
     setFilteredStatistics(filteredValues);
   };
 
@@ -91,17 +101,16 @@ const Statistics: FC = () => {
     setCurrentInterval(event.target.value);
   };
 
-  // Debounced function for updating the search query
   const debouncedSearch = useCallback(
     debounce((query: string) => {
       setSearchQuery(query);
-      getUsersStatistics();
+      getUsersStatistics(query);
     }, 500),
     [],
   );
 
   if (!isClient) {
-    return null; // or a loading spinner
+    return null;
   }
 
   if (isLoading) {
@@ -117,11 +126,19 @@ const Statistics: FC = () => {
       <div className="flex gap-2">
         <Button
           color="primary"
-          endContent={<i className="mdi mdi-plus" />}
+          endContent={<i className="mdi mdi-plus mr-2 text-xl" />}
           variant="shadow"
           onClick={() => onOpen()}
         >
-          Přidat
+          <span className="ml-2">Přidat</span>
+        </Button>
+        <Button
+          color="danger"
+          endContent={<i className="mdi mdi-restart mr-2 text-xl" />}
+          variant="shadow"
+          onClick={() => resetAllStatistics()}
+        >
+          <span className="ml-2">Resetovat</span>
         </Button>
         <div className="hidden lg:block w-full">
           <ButtonGroup className="mb-5 w-full">
@@ -141,7 +158,7 @@ const Statistics: FC = () => {
         <div className="block lg:hidden mb-5 w-full">
           <Select
             placeholder="Vyberte období"
-            value={currentInterval || undefined} // Ensure value is string or undefined
+            value={currentInterval || undefined}
             onChange={handleSelectChange}
           >
             {buttons.map((e) => (
@@ -154,22 +171,20 @@ const Statistics: FC = () => {
       </div>
       <StatisticModal
         isOpen={isOpen}
-        refetch={getUsersStatistics}
+        refetch={() => getUsersStatistics(searchQuery)}
         onOpenChange={onOpenChange}
       />
       <Input
         className="mb-5"
         endContent={<i className="mdi mdi-magnify" />}
         placeholder="Hledat"
-        onChange={({ target: { value } }) => {
-          debouncedSearch(value);
-        }}
+        onChange={({ target: { value } }) => debouncedSearch(value)}
       />
       <div className="grid gap-5 grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 3xl:grid-cols-5">
         {filteredStatistics.map((s) => (
           <StatisticCard
             key={s.id}
-            refetch={getUsersStatistics}
+            refetch={() => getUsersStatistics(searchQuery)}
             statistic={s}
           />
         ))}
