@@ -130,7 +130,7 @@ const StatisticCard: FC<StatisticProps> = ({ statistic, refetch }) => {
             <p className="text-default-500 font-bold text-xl flex gap-1">
               {isPercentage ? (
                 <>
-                  <span>{((falseVals / trueVals) * 100).toFixed(2)} %</span>
+                  <span>{((trueVals / falseVals) * 100).toFixed(2)} %</span>
                 </>
               ) : (
                 <>
